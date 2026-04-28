@@ -20,11 +20,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.on_event("startup")
-def on_startup() -> None:
-    initialize_database()
-
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/docs")

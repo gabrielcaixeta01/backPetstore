@@ -8,7 +8,6 @@ __pycache__/
 venv/
 
 # Tool caches
-.pytest_cache/
 .mypy_cache/
 
 # Environment files
