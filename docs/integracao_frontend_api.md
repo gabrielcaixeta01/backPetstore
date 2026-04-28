@@ -398,6 +398,67 @@ Prefixo: `/appointment`
 
 **O que muda no Frontend:**
 
+## 5. Autenticação (login)
+
+A API usa autenticação baseada em JWT com esquema Bearer. O login é simples por email e senha (JSON) — não é necessário `client_id`/`client_secret`.
+
+- Endpoint de login:
+
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@exemplo.com",
+  "password": "senha123"
+}
+```
+
+Resposta (exemplo):
+
+```json
+{
+  "access_token": "<JWT_TOKEN>",
+  "token_type": "bearer",
+  "user": { /* objeto User */ }
+}
+```
+
+- Endpoint de registro (opcional): `POST /auth/register` — envia um `UserCreate` em JSON e recebe o mesmo `TokenResponse` com `access_token`.
+
+Como usar o token no frontend:
+
+- Enviar header `Authorization: Bearer <JWT_TOKEN>` em todas as requisições protegidas.
+
+Exemplo com `fetch`:
+
+```js
+const token = '<JWT_TOKEN>';
+fetch('/pet/pets', {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+  }
+});
+```
+
+Exemplo com `axios` (definir header global):
+
+```js
+import axios from 'axios';
+axios.defaults.baseURL = 'http://127.0.0.1:8000';
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+const resp = await axios.get('/pet/pets');
+```
+
+Swagger / OpenAPI:
+
+- Abra `/docs` e use o botão "Authorize" — cole `Bearer <JWT_TOKEN>` (inclua o prefixo `Bearer`) no campo para que o Swagger envie o header automaticamente.
+
+Notas de implementação
+- O endpoint de login retorna `token_type: "bearer"`; o frontend pode armazenar o token em memória, `localStorage` ou `sessionStorage` conforme a sua política de segurança.
+- Sempre enviar o token em `Authorization` para acessar rotas que dependem de `get_current_active_user`.
+
 1. **Sem chamadas adicionais**: Antes, era necessário fazer uma chamada separada para obter os serviços de um atendimento. Agora eles vêm junto.
 
 2. **Estrutura de iteração**: Para listar os serviços de um atendimento agora é simples:
