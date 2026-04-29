@@ -8,8 +8,45 @@ from sqlalchemy.orm import Session
 from app.schemas.models import Appointment, AppointmentService, EmployeeModel, Pet, Service
 
 
-VALID_PAYMENT_METHODS = {"dinheiro", "cartão de crédito", "cartão de débito", "pix", "transferência bancária"}
-VALID_APPOINTMENT_STATUS = {"agendado", "em andamento", "concluído", "cancelado"}
+PAYMENT_METHOD_ALIASES = {
+	"dinheiro": "dinheiro",
+	"cash": "dinheiro",
+	"cartão de crédito": "cartão de crédito",
+	"cartao de credito": "cartão de crédito",
+	"credit_card": "cartão de crédito",
+	"cartão de débito": "cartão de débito",
+	"cartao de debito": "cartão de débito",
+	"debit_card": "cartão de débito",
+	"pix": "pix",
+	"transferência bancária": "transferência bancária",
+	"transferencia bancaria": "transferência bancária",
+	"transfer_bank": "transferência bancária",
+}
+
+APPOINTMENT_STATUS_ALIASES = {
+	"agendado": "agendado",
+	"scheduled": "agendado",
+	"em andamento": "em andamento",
+	"in_progress": "em andamento",
+	"concluído": "concluído",
+	"concluido": "concluído",
+	"completed": "concluído",
+	"cancelado": "cancelado",
+	"canceled": "cancelado",
+	"cancelled": "cancelado",
+}
+
+
+def _normalize_payment_method(payment_method: str | None) -> str | None:
+	if payment_method is None:
+		return None
+	return PAYMENT_METHOD_ALIASES.get(payment_method.strip().lower())
+
+
+def _normalize_status(status: str | None) -> str | None:
+	if status is None:
+		return None
+	return APPOINTMENT_STATUS_ALIASES.get(status.strip().lower())
 
 
 
@@ -88,7 +125,8 @@ def _validate_appointment_fields(
 	status: str | None,
 	notes: str | None,
 ) -> None:
-	if payment_method is not None and payment_method not in VALID_PAYMENT_METHODS:
+	normalized_payment_method = _normalize_payment_method(payment_method)
+	if payment_method is not None and normalized_payment_method is None:
 		raise HTTPException(
 			status_code=400,
 			detail=(
@@ -97,7 +135,8 @@ def _validate_appointment_fields(
 			),
 		)
 
-	if status is not None and status not in VALID_APPOINTMENT_STATUS:
+	normalized_status = _normalize_status(status)
+	if status is not None and normalized_status is None:
 		raise HTTPException(
 			status_code=400,
 			detail="Status inválido. Use 'agendado', 'em andamento', 'concluído' ou 'cancelado'",
@@ -115,7 +154,7 @@ def create_appointment(
 	pet_id: int,
 	payment_method: str,
 	service_ids: list[int],
-	service_at: datetime,
+	service_at: datetime | None,
 	online: bool = False,
 	status: str = "agendado",
 	notes: str | None = None,
@@ -134,10 +173,14 @@ def create_appointment(
 		raise HTTPException(status_code=400, detail="Forma de pagamento é obrigatória")
 
 	_validate_appointment_fields(payment_method=payment_method, status=status, notes=notes)
+	normalized_payment_method = _normalize_payment_method(payment_method)
+	normalized_status = _normalize_status(status)
 	
 	_require_employee_belongs_to_store(db, employee_id, store_id)
 
 	if service_ids is None:
+		raise HTTPException(status_code=400, detail="Ao menos um serviço é obrigatório")
+	if not service_ids:
 		raise HTTPException(status_code=400, detail="Ao menos um serviço é obrigatório")
 	services = _load_services(db, service_ids)
 
@@ -154,12 +197,12 @@ def create_appointment(
 	appointment = Appointment(
 		final_value=Decimal("0"),
 		service_at=service_at or datetime.utcnow(),
-		status= status,
+		status=normalized_status or status,
 		store_id=store_id,
 		client_id=client_id,
 		employee_id=employee_id,
 		pet_id=pet_id,
-		payment_method=payment_method,
+		payment_method=normalized_payment_method or payment_method,
 		notes=notes,
 		online=online,
 	)
@@ -212,8 +255,12 @@ def update_appointment(
 	
 	effective_services = _load_services(db, service_ids) if service_ids is not None else None
 	_validate_appointment_fields(payment_method=payment_method, status=status, notes=notes)
+	normalized_payment_method = _normalize_payment_method(payment_method)
+	normalized_status = _normalize_status(status)
 
 	_require_employee_belongs_to_store(db, effective_employee_id, effective_store_id)
+	if service_ids is not None and not service_ids:
+		raise HTTPException(status_code=400, detail="Ao menos um serviço é obrigatório quando service_ids é informado")
 
 	if pet_id is not None:
 		pet = db.query(Pet).filter(Pet.id == pet_id).first()
@@ -229,12 +276,12 @@ def update_appointment(
 
 	updates = {
 		"service_at": service_at,
-		"status": status,
+		"status": normalized_status or status,
 		"store_id": store_id,
 		"client_id": client_id,
 		"employee_id": employee_id,
 		"pet_id": pet_id,
-		"payment_method": payment_method,
+		"payment_method": normalized_payment_method or payment_method,
 		"notes": notes,
 		"online": online,
 	}

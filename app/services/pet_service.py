@@ -1,8 +1,23 @@
 from fastapi import HTTPException
+from decimal import Decimal
 from sqlalchemy import func
 from sqlalchemy.orm import Session, selectinload
 
 from app.schemas.models import Pet, Tag
+
+VALID_SEX_VALUES = {
+    "M": "M",
+    "F": "F",
+    "macho": "M",
+    "femea": "F",
+    "fêmea": "F",
+}
+
+
+def _normalize_sex(sex: str | None) -> str | None:
+    if sex is None:
+        return None
+    return VALID_SEX_VALUES.get(sex.strip())
 
 
 def _normalize_tag_ids(tag_ids: list[int | str] | None) -> list[int] | None:
@@ -51,7 +66,7 @@ def create_pet(
     breed: str,
     sex: str,
     size: str,
-    weight: float,
+    weight: Decimal,
     category_id: int,
     owner_id: int,
     health_notes: str | None = None,
@@ -65,11 +80,23 @@ def create_pet(
     if len(name) < 2 or len(name) > 120:
         raise HTTPException(status_code=400, detail="Nome do pet deve conter entre 2 e 120 caracteres")
     
-    if breed and len(breed) > 80:
+    if not breed:
+        raise HTTPException(status_code=400, detail="Raça do pet é obrigatória")
+
+    if len(breed) > 80:
         raise HTTPException(status_code=400, detail="Raça do pet deve conter no máximo 80 caracteres")
     
-    if sex and sex not in {"M", "F"}:
-        raise HTTPException(status_code=400, detail="Sexo do pet inválido. Use 'M' ou 'F'")
+    normalized_sex = _normalize_sex(sex)
+    if normalized_sex is None:
+        raise HTTPException(status_code=400, detail="Sexo do pet inválido. Use 'M', 'F', 'macho' ou 'femea'")
+
+    if not size:
+        raise HTTPException(status_code=400, detail="Tamanho do pet é obrigatório")
+
+    if weight is None:
+        raise HTTPException(status_code=400, detail="Peso do pet é obrigatório")
+    if weight < 0:
+        raise HTTPException(status_code=400, detail="Peso do pet não pode ser negativo")
     
     if health_notes and len(health_notes) > 500:
         raise HTTPException(status_code=400, detail="Anotações de saúde devem conter no máximo 500 caracteres")
@@ -93,7 +120,7 @@ def create_pet(
     db_pet = Pet(
         name=name,
         breed=breed,
-        sex=sex,
+        sex=normalized_sex,
         size=size,
         weight=weight,
         health_notes=health_notes,
@@ -129,7 +156,7 @@ def update_pet(
     breed: str | None = None,
     sex: str | None = None,
     size: str | None = None,
-    weight: float | None = None,
+    weight: Decimal | None = None,
     health_notes: str | None = None,
     category_id: int | None = None,
     owner_id: int | None = None,
@@ -162,11 +189,24 @@ def update_pet(
     if len(pet.name) < 2 or len(pet.name) > 120:
         raise HTTPException(status_code=400, detail="Nome do pet deve conter entre 2 e 120 caracteres")
 
-    if pet.breed and len(pet.breed) > 80:
+    if not pet.breed:
+        raise HTTPException(status_code=400, detail="Raça do pet é obrigatória")
+
+    if len(pet.breed) > 80:
         raise HTTPException(status_code=400, detail="Raça do pet deve conter no máximo 80 caracteres")
 
-    if pet.sex and pet.sex not in {"M", "F"}:
-        raise HTTPException(status_code=400, detail="Sexo do pet inválido. Use 'M' ou 'F'")
+    normalized_sex = _normalize_sex(pet.sex)
+    if normalized_sex is None:
+        raise HTTPException(status_code=400, detail="Sexo do pet inválido. Use 'M', 'F', 'macho' ou 'femea'")
+    pet.sex = normalized_sex
+
+    if not pet.size:
+        raise HTTPException(status_code=400, detail="Tamanho do pet é obrigatório")
+
+    if pet.weight is None:
+        raise HTTPException(status_code=400, detail="Peso do pet é obrigatório")
+    if pet.weight < 0:
+        raise HTTPException(status_code=400, detail="Peso do pet não pode ser negativo")
 
     if pet.health_notes and len(pet.health_notes) > 500:
         raise HTTPException(status_code=400, detail="Anotações de saúde devem conter no máximo 500 caracteres")

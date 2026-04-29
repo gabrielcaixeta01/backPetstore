@@ -117,6 +117,31 @@ def update_store(
 ):
 
     store = get_store(db, store_id)
+
+    if name is not None:
+        name = name.strip()
+        if not name:
+            raise HTTPException(status_code=400, detail="Nome da loja é obrigatório")
+        if len(name) < 2 or len(name) > 120:
+            raise HTTPException(status_code=400, detail="Nome da loja deve conter entre 2 e 120 caracteres")
+
+    if phone is not None and len(phone) > 20:
+        raise HTTPException(status_code=400, detail="Telefone da loja deve conter no máximo 20 caracteres")
+    if email is not None and len(email) > 255:
+        raise HTTPException(status_code=400, detail="Email da loja deve conter no máximo 255 caracteres")
+    if cep is not None and not re.fullmatch(r"\d{5}-?\d{3}", cep):
+        raise HTTPException(status_code=400, detail="CEP da loja inválido. Use 8 dígitos com ou sem hífen")
+    if city is not None and len(city) > 120:
+        raise HTTPException(status_code=400, detail="Cidade da loja deve conter no máximo 120 caracteres")
+    if state is not None and len(state) > 2:
+        raise HTTPException(status_code=400, detail="Estado da loja deve conter no máximo 2 caracteres")
+    if street is not None and len(street) > 255:
+        raise HTTPException(status_code=400, detail="Rua da loja deve conter no máximo 255 caracteres")
+    if neighborhood is not None and len(neighborhood) > 120:
+        raise HTTPException(status_code=400, detail="Bairro da loja deve conter no máximo 120 caracteres")
+    if number is not None and len(number) > 20:
+        raise HTTPException(status_code=400, detail="Número da loja deve conter no máximo 20 caracteres")
+
     for field, value in {
         "name": name,
         "cnpj": cnpj,

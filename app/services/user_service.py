@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
@@ -57,7 +57,7 @@ def create_user(
     employee_code: str | None = None,
     job_title: str | None = None,
     salary: Decimal | None = None,
-    hired_at: datetime | None = None,
+    hired_at: date | None = None,
     store_id: int | None = None,
 ):
    
@@ -76,6 +76,15 @@ def create_user(
     
     if phone and len(phone) > 20:
         raise HTTPException(status_code=400, detail="Número de telefone deve conter no máximo 20 caracteres")
+
+    if email and len(email) > 255:
+        raise HTTPException(status_code=400, detail="E-mail deve conter no máximo 255 caracteres")
+
+    if cpf is not None and len(cpf) > 14:
+        raise HTTPException(status_code=400, detail="CPF deve conter no máximo 14 caracteres")
+
+    if cnpj is not None and len(cnpj) > 18:
+        raise HTTPException(status_code=400, detail="CNPJ deve conter no máximo 18 caracteres")
     
     if client_type is not None and normalized_client_type is None:
         raise HTTPException(
@@ -175,8 +184,8 @@ def update_user(
         profile_type: str | None = None,
         cpf: str | None = None,
         cnpj: str | None = None,
-        active: bool = True,
-        is_superuser: bool = False,
+        active: bool | None = None,
+        is_superuser: bool | None = None,
         client_type: str | None = None,
         cep: str | None = None,
         state: str | None = None,
@@ -184,7 +193,7 @@ def update_user(
         employee_code: str | None = None,
         job_title: str | None = None,
         salary: Decimal | None = None,
-        hired_at: datetime | None = None,
+        hired_at: date | None = None,
         store_id: int | None = None,
     ):
 
@@ -197,6 +206,21 @@ def update_user(
 
     if name is not None and not name.strip():
         raise HTTPException(status_code=400, detail="Nome do usuário é obrigatório")
+
+    if name is not None and len(name) > 120:
+        raise HTTPException(status_code=400, detail="Nome do usuário deve conter no máximo 120 caracteres")
+
+    if email is not None and len(email) > 255:
+        raise HTTPException(status_code=400, detail="E-mail deve conter no máximo 255 caracteres")
+
+    if phone is not None and len(phone) > 20:
+        raise HTTPException(status_code=400, detail="Número de telefone deve conter no máximo 20 caracteres")
+
+    if cpf is not None and len(cpf) > 14:
+        raise HTTPException(status_code=400, detail="CPF deve conter no máximo 14 caracteres")
+
+    if cnpj is not None and len(cnpj) > 18:
+        raise HTTPException(status_code=400, detail="CNPJ deve conter no máximo 18 caracteres")
 
     if client_type is not None and normalized_client_type is None:
         raise HTTPException(

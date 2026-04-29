@@ -12,7 +12,7 @@ router = APIRouter(prefix="/appointment", tags=["CRUD de Atendimentos"])
 
 @router.post("", status_code=201, response_model=Appointment)
 def create_appointment(
-	service_at: datetime = Query(datetime.utcnow()),
+	service_at: datetime | None = Query(None),
 	payment_method: str = Query(...),
 	status: str = Query("agendado"),
 	online: bool = Query(False),

@@ -5,6 +5,7 @@ from app.services import pet_service
 from app.schemas.schemas import Pet
 from app.schemas.models import UserModel
 from app.core.security import get_current_active_user
+from decimal import Decimal
 
 router = APIRouter(prefix="/pet", tags=["CRUD de Pets"])
 
@@ -15,7 +16,7 @@ def create_pet(
     breed: str = Query(...),
     sex: str = Query(...),
     size: str = Query(...),
-    weight: float = Query(...),
+    weight: Decimal = Query(...),
     health_notes: str | None = Query(None),
     category_id: int = Query(...),
     owner_id: int = Query(...),
@@ -58,7 +59,7 @@ def update_pet(
     breed: str | None = Query(None),
     sex: str | None = Query(None),
     size: str | None = Query(None),
-    weight: float | None = Query(None),
+    weight: Decimal | None = Query(None),
     health_notes: str | None = Query(None),
     category_id: int | None = Query(None),
     owner_id: int | None = Query(None),

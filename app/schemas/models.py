@@ -103,11 +103,11 @@ class Pet(Base):
     __tablename__ = "pets"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String(120), index=True)
-    breed = Column(String(80))
-    sex = Column(String(20))
-    size = Column(String(20))
-    weight = Column(Numeric(6, 2))
+    name = Column(String(120), index=True, nullable=False)
+    breed = Column(String(80), nullable=False)
+    sex = Column(String(20), nullable=False)
+    size = Column(String(20), nullable=False)
+    weight = Column(Numeric(6, 2), nullable=False)
     health_notes = Column(String(500))
     category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
     owner_id = Column(Integer, ForeignKey("clients.user_id", ondelete="CASCADE"), nullable=False)

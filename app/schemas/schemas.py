@@ -24,31 +24,31 @@ class Store(BaseModel):
 
 
 class StoreCreate(BaseModel):
-    name: str
-    cnpj: str
-    phone: str
-    email: str
-    cep: str
-    city: str
-    state: str
-    street: str
-    neighborhood: str
-    number: str
+    name: str = Field(min_length=2, max_length=120)
+    cnpj: str = Field(min_length=14, max_length=18)
+    phone: str = Field(max_length=20)
+    email: str = Field(max_length=255)
+    cep: str = Field(max_length=9)
+    city: str = Field(max_length=120)
+    state: str = Field(min_length=2, max_length=2)
+    street: str = Field(max_length=255)
+    neighborhood: str = Field(max_length=120)
+    number: str = Field(max_length=20)
     active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class StoreUpdate(BaseModel):
-    name: Optional[str] = None
-    cnpj: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    cep: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    street: Optional[str] = None
-    neighborhood: Optional[str] = None
-    number: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=2, max_length=120)
+    cnpj: Optional[str] = Field(default=None, min_length=14, max_length=18)
+    phone: Optional[str] = Field(default=None, max_length=20)
+    email: Optional[str] = Field(default=None, max_length=255)
+    cep: Optional[str] = Field(default=None, max_length=9)
+    city: Optional[str] = Field(default=None, max_length=120)
+    state: Optional[str] = Field(default=None, min_length=2, max_length=2)
+    street: Optional[str] = Field(default=None, max_length=255)
+    neighborhood: Optional[str] = Field(default=None, max_length=120)
+    number: Optional[str] = Field(default=None, max_length=20)
     active: Optional[bool] = None
     created_at: Optional[datetime] = None
 
@@ -87,42 +87,42 @@ class LogoutResponse(BaseModel):
 
 
 class UserCreate(BaseModel):
-    name: str
-    email: str
+    name: str = Field(min_length=2, max_length=120)
+    email: str = Field(max_length=255)
     password: str
-    phone: str
+    phone: str = Field(max_length=20)
     profile_type: Literal["cliente", "funcionario"]
-    cpf: Optional[str] = None
-    cnpj: Optional[str] = None
+    cpf: Optional[str] = Field(default=None, max_length=14)
+    cnpj: Optional[str] = Field(default=None, max_length=18)
     active: bool = True
     is_superuser: bool = False
-    client_type: Optional[str] = None
-    cep: Optional[str] = None
-    state: Optional[str] = None
-    city: Optional[str] = None
-    employee_code: Optional[str] = None
-    job_title: Optional[str] = None
+    client_type: Optional[str] = Field(default=None, max_length=20)
+    cep: Optional[str] = Field(default=None, max_length=9)
+    state: Optional[str] = Field(default=None, max_length=2)
+    city: Optional[str] = Field(default=None, max_length=120)
+    employee_code: Optional[str] = Field(default=None, max_length=20)
+    job_title: Optional[str] = Field(default=None, max_length=80)
     salary: Optional[Decimal] = None
-    hired_at: Optional[datetime] = None
+    hired_at: Optional[date] = None
     store_id: Optional[int] = None
 
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=2, max_length=120)
+    email: Optional[str] = Field(default=None, max_length=255)
     password: Optional[str] = None
-    phone: Optional[str] = None
+    phone: Optional[str] = Field(default=None, max_length=20)
     profile_type: Optional[Literal["cliente", "funcionario"]] = None
-    cpf: Optional[str] = None
-    cnpj: Optional[str] = None
+    cpf: Optional[str] = Field(default=None, max_length=14)
+    cnpj: Optional[str] = Field(default=None, max_length=18)
     active: Optional[bool] = None
     is_superuser: Optional[bool] = None
-    client_type: Optional[str] = None
-    cep: Optional[str] = None
-    state: Optional[str] = None
-    city: Optional[str] = None
-    employee_code: Optional[str] = None
-    job_title: Optional[str] = None
+    client_type: Optional[str] = Field(default=None, max_length=20)
+    cep: Optional[str] = Field(default=None, max_length=9)
+    state: Optional[str] = Field(default=None, max_length=2)
+    city: Optional[str] = Field(default=None, max_length=120)
+    employee_code: Optional[str] = Field(default=None, max_length=20)
+    job_title: Optional[str] = Field(default=None, max_length=80)
     salary: Optional[Decimal] = None
     hired_at: Optional[date] = None
     store_id: Optional[int] = None
@@ -211,24 +211,24 @@ class Pet(BaseModel):
 
 
 class PetCreate(BaseModel):
-    name: str
-    breed: Optional[str] = None
-    sex: Optional[str] = None
-    size: Optional[str] = None
-    weight: Optional[Decimal] = None
-    health_notes: Optional[str] = None
+    name: str = Field(min_length=2, max_length=120)
+    breed: str = Field(max_length=80)
+    sex: str = Field(max_length=20)
+    size: str = Field(max_length=20)
+    weight: Decimal
+    health_notes: Optional[str] = Field(default=None, max_length=500)
     category_id: int
     owner_id: int
     tag_ids: list[int] = Field(default_factory=list)
 
 
 class PetUpdate(BaseModel):
-    name: Optional[str] = None
-    breed: Optional[str] = None
-    sex: Optional[str] = None
-    size: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=2, max_length=120)
+    breed: Optional[str] = Field(default=None, max_length=80)
+    sex: Optional[str] = Field(default=None, max_length=20)
+    size: Optional[str] = Field(default=None, max_length=20)
     weight: Optional[Decimal] = None
-    health_notes: Optional[str] = None
+    health_notes: Optional[str] = Field(default=None, max_length=500)
     category_id: Optional[int] = None
     owner_id: Optional[int] = None
     tag_ids: Optional[list[int]] = None
