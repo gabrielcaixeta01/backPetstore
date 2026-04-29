@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from decimal import Decimal
-
 from app.schemas.models import Service
 
 

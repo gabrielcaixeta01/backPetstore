@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services import user_service
 from app.schemas.schemas import User
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from app.core.security import get_current_active_user
 
@@ -29,7 +29,7 @@ def create_user(
     employee_code: str | None = Query(None),
     job_title: str | None = Query(None),
     salary: Decimal | None = Query(None),
-    hired_at: datetime | None = Query(None),
+    hired_at: date | None = Query(None),
     store_id: int | None = Query(None),
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
@@ -91,7 +91,7 @@ def update_user(
     employee_code: str | None = Query(None),
     job_title: str | None = Query(None),
     salary: Decimal | None = Query(None),
-    hired_at: datetime | None = Query(None),
+    hired_at: date | None = Query(None),
     store_id: int | None = Query(None),
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),

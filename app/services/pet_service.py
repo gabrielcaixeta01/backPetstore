@@ -2,8 +2,8 @@ from fastapi import HTTPException
 from decimal import Decimal
 from sqlalchemy import func
 from sqlalchemy.orm import Session, selectinload
-
 from app.schemas.models import Pet, Tag
+
 
 VALID_SEX_VALUES = {
     "M": "M",
