@@ -145,7 +145,7 @@ class Employee(BaseModel):
     employee_code: str
     job_title: str
     salary: Decimal
-    hired_at: datetime = Field(default_factory=datetime.utcnow)
+    hired_at: date
     store_id: int
 
     class Config:

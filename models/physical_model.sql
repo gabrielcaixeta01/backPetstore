@@ -15,7 +15,7 @@ CREATE TABLE users (
 CREATE TABLE clients (
 	user_id INTEGER NOT NULL,
 	client_type VARCHAR(20) NOT NULL,
-	cep VARCHAR(8) NOT NULL,
+	cep VARCHAR(9) NOT NULL,
 	state CHAR(2) NOT NULL,
 	city VARCHAR(120) NOT NULL,
 	PRIMARY KEY (user_id),
