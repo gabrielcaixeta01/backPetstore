@@ -36,13 +36,17 @@ await api.post('/user', null, {
 
 ## 2.1 Mudancas recentes
 
-### Appointments agora retornam os servicos prestados
-A partir da versao atual, ao retornar um atendimento, o endpoint inclui automaticamente a lista de servicos prestados (campo `services`). Isso elimina a necessidade de fazer uma chamada adicional para obter os detalhes dos servicos.
+### Appointments agora retornam os servicos prestados em campo `items`
+A partir da versao atual, ao retornar um atendimento, o endpoint inclui automaticamente a lista de servicos prestados (campo `items`). Isso elimina a necessidade de fazer uma chamada adicional para obter os detalhes dos servicos.
 
 **O que mudou:**
-- Campo `services` adicionado ao schema `Appointment`
+- Campo `items` (antes `services`) adicionado ao schema `Appointment`
 - Cada item contem: `service_id`, `charged_value`, `order_date`, `delivery_date`, e `observations`
 - O `value_final` é calculado automaticamente como soma dos `charged_value` dos itens
+- Campo `payment_type` renomeado para `payment_method`
+- Campo `worker_id` renomeado para `employee_id`
+- `service_ids` é agora OBRIGATORIO na criacao e atualizacao
+- Validacao: pet deve pertencer ao cliente informado
 
 ## 3. Convencao de respostas e erros
 
@@ -88,12 +92,22 @@ Prefixo: `/user`
 ### Endpoints
 - `POST /user`
   - Query params:
-    - `name` (string, obrigatorio)
+    - `name` (string, obrigatorio, 2-120 caracteres)
     - `password` (string, obrigatorio, minimo 8)
-    - `email` (string, obrigatorio)
-    - `phone` (string, opcional)
+    - `email` (string, obrigatorio, max 255 caracteres)
+    - `phone` (string, opcional, max 20 caracteres)
+    - `profile_type` (string, obrigatorio: cliente ou funcionario)
     - `user_active` (boolean, opcional, default `true`)
-    - `role` (string, opcional, default `cliente`)
+    - Parametros adicionais para funcionario (se profile_type=funcionario):
+      - `hired_at` (date, opcional no router; formato: YYYY-MM-DD)
+      - `job_title` (string, max 80 caracteres)
+      - `salary` (Decimal, opcional)
+      - `store_id` (int, obrigatorio para funcionario)
+    - Parametros adicionais para cliente (se profile_type=cliente):
+      - `cpf` (string, opcional, max 14 caracteres) ou `cnpj` (string, opcional, max 18 caracteres)
+      - `cep` (string, opcional, max 9 caracteres)
+      - `city` (string, opcional, max 120 caracteres)
+      - `state` (string, opcional, max 2 caracteres)
   - Retorno: `201` + `User`
 
 - `GET /user/users`
@@ -104,21 +118,31 @@ Prefixo: `/user`
 
 - `PUT /user/{user_id}`
   - Query params (todos opcionais):
-    - `name`, `email`, `password`, `phone`, `role`, `user_active`
+    - `name`, `email`, `password`, `phone`, `profile_type`, `user_active`
+    - Parametros opcionais adicionais para funcionario:
+      - `hired_at` (date, formato YYYY-MM-DD)
+      - `job_title` (string)
+      - `salary` (Decimal)
+      - `store_id` (int)
+    - Parametros opcionais adicionais para cliente:
+      - `cpf` (string)
+      - `cnpj` (string)
+      - `cep` (string)
+      - `city` (string)
+      - `state` (string)
   - Retorno: `200` + `User`
 
-- `DELETE /user/{user_id}`
-  - Retorno: `200` + `{ "message": "Usuario deletado com sucesso" }`
+- `Dhone": "11999999999",
+  "profile_type": "cliente",
+  "cpf": null,
+  "cnpj": null,
+  "active": true,
+  "is_superuser": false,
+  "created_at": "2026-04-14T19:30:00"
+}
+```
 
-### Shape de resposta `User`
-
-```json
-{
-  "id": 1,
-  "name": "Gabriel",
-  "email": "gabriel@email.com",
-  "password_hash": "12345678",
-  "phone": "11999999999",
+**Observacao importante**: O campo `password_hash` NAO deve ser retornado na resposta por motivos de seguranca. Caso esteja sendo retornado, contacte o backend para correção
   "role": "cliente",
   "cpf": null,
   "cnpj": null,
@@ -180,9 +204,14 @@ Prefixo: `/pet`
 ### Endpoints
 - `POST /pet`
   - Query params:
-    - obrigatorio: `name`
-    - opcionais no router: `breed`, `sex`, `size`, `weight`, `health_notes`, `category_id`, `owner_id`, `tag_ids`
-  - Regra de negocio (service): `category_id` e `owner_id` sao obrigatorios
+    - obrigatorios: `name`, `breed`, `sex`, `size`, `weight`, `category_id`, `owner_id`
+    - opcionais: `health_notes`, `tag_ids`
+  - Validacoes:
+    - `name`: 2-120 caracteres
+    - `breed`: max 80 caracteres
+    - `sex`: aceita M, F, macho, femea, fêmea (normalizados para M ou F)
+    - `weight`: Decimal >= 0
+    - `health_notes`: max 500 caracteres
   - Retorno: `201` + `Pet`
 
 - `GET /pet/pets`
@@ -207,7 +236,7 @@ Prefixo: `/pet`
   "breed": "SRD",
   "sex": "M",
   "size": "medio",
-  "weight": 12.5,
+  "weight": 12.50,
   "health_notes": "Vacinado",
   "category_id": 1,
   "owner_id": 5,
@@ -220,6 +249,8 @@ Prefixo: `/pet`
   ]
 }
 ```
+
+**Nota**: O campo `weight` é um número Decimal com 2 casas decimais. No frontend, use `number` em TypeScript.
 
 ## 4.4 Services
 Prefixo: `/service`
@@ -332,28 +363,29 @@ Prefixo: `/appointment`
 
 ### Endpoints
 - `POST /appointment`
-  - Query params:
-    - `service_at` (datetime, opcional)
-    - `status` (string, opcional, default `agendado`)
-    - `store_id` (int, obrigatorio)
-    - `client_id` (int, obrigatorio)
-    - `employee_id` (int, obrigatorio)
-    - `pet_id` (int, obrigatorio)
-    - `payment_method` (string, obrigatorio na regra de negocio)
-    - `notes` (string, opcional)
-    - `online` (boolean, opcional, default `false`)
-    - `service_ids` (lista de ints, obrigatorio; envie repetindo o parametro na URL)
-  - Retorno: `201` + `Appointment` (campos `services` preenchidos com os servicos informados)
+  - Query params obrigatorios:
+    - `store_id` (int)
+    - `client_id` (int)
+    - `employee_id` (int, id do usuario funcionario)
+    - `pet_id` (int; o pet DEVE pertencer ao cliente)
+    - `payment_method` (string, obrigatorio; aceita: dinheiro, cash, pix, cartao_credito, credit_card, cartao_debito, debit_card, boleto; normalizados)
+    - `service_ids` (lista de ints, obrigatorio; envie repetindo o parametro na URL; minimo 1 servico)
+  - Query params opcionais:
+    - `service_at` (datetime, default null)
+    - `status` (string, default agendado; aceita: agendado, em_andamento, concluido, cancelado; normalizados)
+    - `notes` (string, max 500 caracteres)
+    - `online` (boolean, default false)
+  - Retorno: `201` + `Appointment` (com `items` preenchidos)
 
 - `GET /appointment/appointments`
-  - Retorno: `200` + `Appointment[]` (com `services` preenchidos para cada atendimento)
+  - Retorno: `200` + `Appointment[]` (com `items` preenchidos para cada atendimento)
 
 - `GET /appointment/{id}`
-  - Retorno: `200` + `Appointment` (com `services` preenchidos)
+  - Retorno: `200` + `Appointment` (com `items` preenchidos)
 
 - `PUT /appointment/{id}`
   - Query params: todos opcionais, incluindo `service_ids` para substituir os servicos do atendimento; se informado, deve conter ao menos um id
-  - Retorno: `200` + `Appointment` (com `services` preenchidos)
+  - Retorno: `200` + `Appointment` (com `items` preenchidos)
 
 - `DELETE /appointment/{id}`
   - Retorno: `200` + `{ "message": "Atendimento deletado com sucesso" }`
@@ -363,17 +395,17 @@ Prefixo: `/appointment`
 ```json
 {
   "id": 1,
-  "value_final": 80.00,
+  "value_final": 120.00,
   "service_at": "2026-02-01T10:00:00",
-  "payment_type": "pix",
+  "payment_method": "pix",
   "status": "concluido",
   "online": false,
-  "observations": "Atendimento tranquilo",
+  "notes": "Atendimento tranquilo",
   "store_id": 1,
   "client_id": 1,
-  "worker_id": 6,
+  "employee_id": 6,
   "pet_id": 1,
-  "services": [
+  "items": [
     {
       "appointment_id": 1,
       "service_id": 1,
@@ -394,11 +426,30 @@ Prefixo: `/appointment`
 }
 ```
 
-**Observação**: O campo `services` contém todos os serviços prestados no atendimento. Cada item representa um serviço com seu valor cobrado e opcional data de entrega. O `value_final` é calculado automaticamente como a soma de todos os `charged_value` dos itens. Um atendimento deve sempre ter ao menos um serviço.
+**Observacao**: O campo `items` (antes `services`) contem todos os servicos prestados no atendimento. Cada item representa um servico com seu valor cobrado e opcional data de entrega. O `value_final` é calculado automaticamente como a soma de todos os `charged_value` dos itens. Um atendimento deve sempre ter ao menos um servico.
 
 **O que muda no Frontend:**
 
-## 5. Autenticação (login)
+1. **Sem chamadas adicionais**: Antes, era necessário fazer uma chamada separada para obter os servicos de um atendimento. Agora eles vêm junto em `items[]`.
+
+2. **Estrutura de iteração**: Para listar os servicos de um atendimento agora é simples:
+```ts
+appointment.items.forEach(item => {
+  console.log(`Servico ${item.service_id}: R$ ${item.charged_value}`);
+});
+```
+
+3. **Valor total**: O `value_final` já está calculado. Nunca calcule manualmente no front; use sempre `appointment.value_final`.
+
+4. **Mudanças de nomenclatura**:
+   - Campo `services` renomeado para `items`
+   - Campo `payment_type` renomeado para `payment_method`
+   - Campo `worker_id` renomeado para `employee_id`
+   - Campo `observations` renomeado para `notes`
+
+5. **Campos obrigatorios**: `store_id`, `client_id`, `employee_id`, `pet_id`, `payment_method` e `service_ids` são OBRIGATORIOS na criacao.
+
+6. **Validacao**: O pet selecionado DEVE pertencer ao cliente informado. Se não, receberá erro 400 com detalhe explicativo.
 
 A API usa autenticação baseada em JWT com esquema Bearer. O login é simples por email e senha (JSON) — não é necessário `client_id`/`client_secret`.
 
@@ -472,12 +523,12 @@ appointment.items.forEach(item => {
 
 **Criar um Atendimento com Serviços:**
 
-Agora o endpoint POST exige `service_ids` e cria automaticamente os registros em `atendimento_servicos`, usando o preço atual de cada serviço como `charged_value`.
+Agora o endpoint POST exige `service_ids` e cria automaticamente os registros na tabela de juncao, usando o preço atual de cada servico como `charged_value`.
 
 Exemplo de chamada:
 
 ```http
-POST /appointment?store_id=1&client_id=1&worker_id=6&pet_id=1&payment_type=pix&service_ids=1&service_ids=2
+POST /appointment?store_id=1&client_id=1&employee_id=6&pet_id=1&payment_method=pix&service_ids=1&service_ids=2
 ```
 
 No frontend (axios), envie a lista em `params`:
@@ -487,15 +538,15 @@ await api.post('/appointment', null, {
   params: {
     store_id: 1,
     client_id: 1,
-    worker_id: 6,
+    employee_id: 6,
     pet_id: 1,
-    payment_type: 'pix',
+    payment_method: 'pix',
     service_ids: [1, 2],
   },
 });
 ```
 
-Ao atualizar um atendimento, informar `service_ids` substitui a lista atual de serviços por nova seleção.
+Ao atualizar um atendimento, informar `service_ids` substitui a lista atual de servicos por nova seleção.
 
 **Regras de Validacao de Atendimentos:**
 
@@ -507,7 +558,22 @@ Ao atualizar um atendimento, informar `service_ids` substitui a lista atual de s
    ```
    **Implicacao no Front**: Ao exibir o formulario de criacao/edicao de atendimento, popule o dropdown de pets filtrando apenas pelos pets do cliente selecionado. Isso evita erros e melhora UX.
 
-2. **Campos Obrigatorios**: `store_id`, `client_id`, `worker_id`, `pet_id` e `payment_type` sao obrigatorios na criacao do atendimento.
+2. **Campos Obrigatorios**: `store_id`, `client_id`, `employee_id`, `pet_id`, `payment_method` e `service_ids` sao obrigatorios na criacao do atendimento.
+
+3. **Payment Method Normalization**: O sistema aceita 8 variantes de forma de pagamento e normaliza para 4 valores canonicos:
+   - `dinheiro` / `cash` → `dinheiro`
+   - `pix` → `pix`
+   - `cartao_credito` / `credit_card` → `cartão de crédito`
+   - `cartao_debito` / `debit_card` → `cartão de débito`
+   - `boleto` → `boleto`
+
+4. **Status Normalization**: O sistema aceita 8 variantes de status e normaliza para 4 valores canonicos:
+   - `agendado` / `scheduled` → `agendado`
+   - `em_andamento` / `in_progress` → `em_andamento`
+   - `concluido` / `completed` → `concluido`
+   - `cancelado` / `cancelled` → `cancelado`
+
+5. **Service IDs**: Deve conter ao menos um servico. Envie como lista repetida na query string ou como array em `params` do axios.
 
 ## 5. Tipos recomendados no frontend (TypeScript)
 
@@ -524,9 +590,8 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  password_hash: string;
   phone: string;
-  role: string;
+  profile_type: string;
   cpf: string | null;
   cnpj: string | null;
   active: boolean;
@@ -553,13 +618,14 @@ export interface Store {
 export interface Pet {
   id: number;
   name: string;
-  breed: string | null;
-  sex: string | null;
-  size: string | null;
-  weight: number | null;
+  breed: string;
+  sex: string;
+  size: string;
+  weight: number;  // Decimal com 2 casas
   health_notes: string | null;
   category_id: number;
   owner_id: number;
+  tags: Tag[];
 }
 
 export interface Service {
@@ -593,16 +659,16 @@ export interface AppointmentService {
 export interface Appointment {
   id: number;
   value_final: number;
-  service_at: string;
-  payment_type: string;
+  service_at: string | null;
+  payment_method: string;
   status: string;
   online: boolean;
-  observations: string | null;
+  notes: string | null;
   store_id: number;
   client_id: number;
-  worker_id: number;
+  employee_id: number;
   pet_id: number;
-  items: AppointmentService[];
+  items: AppointmentService[];  // antes chamado de "services"
 }
 ```
 
@@ -636,8 +702,17 @@ export async function updateUser(userId: number, payload: Partial<{
   email: string;
   password: string;
   phone: string;
-  role: string;
+  profile_type: string;
   user_active: boolean;
+  hired_at: string;
+  job_title: string;
+  salary: number;
+  store_id: number;
+  cpf: string;
+  cnpj: string;
+  cep: string;
+  city: string;
+  state: string;
 }>) {
   const { data } = await api.put(`/user/${userId}`, null, { params: payload });
   return data;
@@ -652,7 +727,23 @@ export async function getAppointment(appointmentId: number) {
 
 export async function listAppointments() {
   const { data } = await api.get('/appointment/appointments');
-  // Cada item no array tera a lista de servicos prestados
+  // Cada item no array tera a lista de servicos prestados em items[]
+  return data;
+}
+
+export async function createAppointment(payload: {
+  store_id: number;
+  client_id: number;
+  employee_id: number;
+  pet_id: number;
+  payment_method: string;
+  service_ids: number[];
+  service_at?: string;
+  status?: string;
+  notes?: string;
+  online?: boolean;
+}) {
+  const { data } = await api.post('/appointment', null, { params: payload });
   return data;
 }
 ```
@@ -662,20 +753,22 @@ export async function listAppointments() {
 ```tsx
 const appointment = await getAppointment(1);
 
-// Agora voce poate acessar os servicos direto:
+// Agora voce pode acessar os servicos direto:
 appointment.items.forEach(item => {
   console.log(`Servico ${item.service_id}: R$ ${item.charged_value}`);
 });
 
 // Total ja esta calculado
 console.log(`Total: R$ ${appointment.value_final}`);
+
 // Quando criar um atendimento, sempre considere a regra de pet vs cliente
 async function criarAtendimento(dados: {
   store_id: number;
   client_id: number;
-  worker_id: number;
+  employee_id: number;
   pet_id: number;
-  payment_type: string;
+  payment_method: string;
+  service_ids: number[];
 }) {
   try {
     const response = await api.post('/appointment', null, { params: dados });
@@ -688,7 +781,8 @@ async function criarAtendimento(dados: {
     }
     throw error;
   }
-}```
+}
+```
 
 ## 7. Checklist de integracao no frontend
 
@@ -699,9 +793,23 @@ async function criarAtendimento(dados: {
 - Tipar campos decimais como `number` no front.
 - Usar `/docs` para validar rapidamente qualquer contrato durante desenvolvimento.
 
-## 8. Fontes do contrato (backend)
+## 8. Resumo das mudancas de campo e tipo
+
+| Recurso | Campo Anterior | Campo Atual | Tipo Anterior | Tipo Atual | Notas |
+|---------|---|---|---|---|---|
+| Pet | - | weight | float | Decimal | Mudança de tipo no router e schema |
+| Pet | sexo | sex | string | string | Agora aceita alias normalization (M/F/macho/femea) |
+| User | role | profile_type | string | string | Renomeado |
+| User | - | hired_at | datetime | date | Mudança de tipo em schemas e service |
+| Appointment | payment_type | payment_method | string | string | Renomeado e agora com alias normalization |
+| Appointment | worker_id | employee_id | int | int | Renomeado |
+| Appointment | observations | notes | string | string | Renomeado |
+| Appointment | services | items | array | array | Campo renomeado |
+
+## 9. Fontes do contrato (backend)
 
 - `app/main.py`
+- `app/routers/auth_crud.py`
 - `app/routers/user_crud.py`
 - `app/routers/store_crud.py`
 - `app/routers/pet_crud.py`
@@ -710,6 +818,7 @@ async function criarAtendimento(dados: {
 - `app/routers/tag_crud.py`
 - `app/routers/appointment_crud.py`
 - `app/schemas/schemas.py`
+- `app/schemas/models.py`
 - `app/services/user_service.py`
 - `app/services/store_service.py`
 - `app/services/pet_service.py`
@@ -717,3 +826,4 @@ async function criarAtendimento(dados: {
 - `app/services/category_service.py`
 - `app/services/tag_service.py`
 - `app/services/appointment_service.py`
+- `app/core/security.py`

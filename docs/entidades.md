@@ -41,10 +41,10 @@ No modelo fisico, a especializacao de Usuario em Cliente e Funcionario e disjunt
 Extensao de Usuario para quem realiza os atendimentos.
 
 - cpf
-- cargo
-- data_inicio
-- salario ou faixa_salarial, se fizer sentido no negocio
-- loja_id (pode ser nulo em periodo de alocacao)
+- cargo (job_title)
+- data_inicio (hired_at, do tipo Date, nao DateTime)
+- salario (Decimal com 2 casas, obrigatorio)
+- loja_id (obrigatorio, nao pode ser nulo)
 
 #### Admin de Loja
 
@@ -70,17 +70,18 @@ Extensao de Usuario para perfil administrativo de rede.
 Representa o animal cadastrado no sistema.
 
 - id
-- nome
-- especie
-- raca
-- sexo
-- data_nascimento
-- porte
-- peso
-- observacoes_saude
-- categoria_id
-- usuario_id
-- ativo
+- nome (2-120 caracteres, obrigatorio)
+- especie (nao implementado no modelo atual)
+- raca (breed, max 80 caracteres, obrigatorio)
+- sexo (aceita: M, F, macho, femea, fêmea; normalizados; obrigatorio)
+- data_nascimento (nao implementado no modelo atual)
+- porte (size, obrigatorio)
+- peso (weight, Decimal com 2 casas, >= 0, obrigatorio)
+- observacoes_saude (health_notes, max 500 caracteres, opcional)
+- categoria_id (obrigatorio)
+- owner_id (id do usuario proprietario, obrigatorio)
+- tags (lista de tags associadas, opcional)
+- ativo (default true)
 
 O pet deve mostrar apenas o dono atual no cadastro.
 
@@ -127,21 +128,29 @@ Representa uma unidade fisica da franquia.
 
 ### Servico / Atendimento
 
+Representa um tipo de servico oferecido pela loja.
+
+- id
+- nome (2-80 caracteres, obrigatorio)
+- descricao (max 500 caracteres, opcional)
+- preco (Decimal com 2 casas, obrigatorio)
+
+### Atendimento
+
 Representa o registro de um atendimento realizado na loja.
 
 - id
-- tipo_servico
-- descricao
-- data_hora
-- status
-- valor
-- desconto
-- forma_pagamento
-- observacoes
-- loja_id
-- pet_id
-- cliente_id
-- funcionario_id
+- data_hora (service_at, datetime, opcional; default null)
+- status (aceita: agendado, em_andamento, concluido, cancelado; normalizados via aliases; obrigatorio)
+- forma_pagamento (payment_method, aceita 8 variantes: dinheiro, cash, pix, cartao_credito, credit_card, cartao_debito, debit_card, boleto; normalizados para 4 valores canonicos; obrigatorio)
+- observacoes (notes, max 500 caracteres, opcional)
+- online (boolean, default false)
+- servicos (lista de servicos prestados, obrigatorio; minimo 1 servico)
+- loja_id (obrigatorio)
+- pet_id (obrigatorio; pet deve pertencer ao cliente)
+- cliente_id (obrigatorio)
+- funcionario_id (employee_id, id do usuario com perfil funcionario, obrigatorio)
 
 O atendimento nao tera etapas internas; apenas o status do processo sera acompanhado.
 Um atendimento deve conter pelo menos um servico prestado, enquanto um servico pode aparecer em nenhum ou varios atendimentos.
+Quando um atendimento eh criado, o sistema automaticamente registra os servicos com seus precos atuais em uma tabela de juncao.
