@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
+from decimal import Decimal
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services import service_service
@@ -11,9 +12,9 @@ router = APIRouter(prefix="/service", tags=["CRUD de Serviços"])
 
 @router.post("", status_code=201, response_model=Service)
 def create_service(
-    name: str = Query(...),
-    description: str | None = Query(None),
-    price: float | None = Query(None),
+    name: str = Query(..., min_length=2, max_length=120),
+    description: str | None = Query(None, max_length=500),
+    price: Decimal | None = Query(None, ge=0),
     current_user: UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
@@ -41,9 +42,9 @@ def get_service(id: int, db: Session = Depends(get_db)) -> Service:
 @router.put("/{id}", response_model=Service)
 def update_service(
     id: int,
-    name: str | None = Query(None),
-    description: str | None = Query(None),
-    price: float | None = Query(None),
+    name: str | None = Query(None, min_length=2, max_length=120),
+    description: str | None = Query(None, max_length=500),
+    price: Decimal | None = Query(None, ge=0),
     current_user: UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ) -> Service:

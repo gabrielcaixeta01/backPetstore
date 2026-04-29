@@ -166,13 +166,13 @@ class Category(BaseModel):
 
 
 class CategoryCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
+    name: str = Field(min_length=2, max_length=80)
+    description: Optional[str] = Field(default=None, max_length=255)
 
 
 class CategoryUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=2, max_length=80)
+    description: Optional[str] = Field(default=None, max_length=255)
 
 
 class Tag(BaseModel):
@@ -185,13 +185,13 @@ class Tag(BaseModel):
 
 
 class TagCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
+    name: str = Field(min_length=2, max_length=80)
+    description: Optional[str] = Field(default=None, max_length=255)
 
 
 class TagUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=2, max_length=80)
+    description: Optional[str] = Field(default=None, max_length=255)
 
 
 class Pet(BaseModel):
@@ -245,15 +245,15 @@ class Service(BaseModel):
 
 
 class ServiceCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
-    price: Decimal
+    name: str = Field(min_length=2, max_length=120)
+    description: Optional[str] = Field(default=None, max_length=500)
+    price: Decimal = Field(ge=0)
 
 
 class ServiceUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    price: Optional[Decimal] = None
+    name: Optional[str] = Field(default=None, min_length=2, max_length=120)
+    description: Optional[str] = Field(default=None, max_length=500)
+    price: Optional[Decimal] = Field(default=None, ge=0)
 
 
 class Appointment(BaseModel):

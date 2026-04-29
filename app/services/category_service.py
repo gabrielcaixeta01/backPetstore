@@ -12,9 +12,11 @@ def create_category(db: Session, name: str, description: str | None = None):
     
     if len(name) < 2:
         raise HTTPException(status_code=400, detail="Nome deve ter 2 ou mais caracteres")
+    if len(name) > 80:
+        raise HTTPException(status_code=400, detail="Nome deve ter no máximo 80 caracteres")
     
-    if description and len(description) > 500:
-        raise HTTPException(status_code=400, detail="Descrição deve ter no máximo 500 caracteres")
+    if description and len(description) > 255:
+        raise HTTPException(status_code=400, detail="Descrição deve ter no máximo 255 caracteres")
     
     db_category = Category(name=name, description=description)
     db.add(db_category)
@@ -37,12 +39,14 @@ def update_category(db: Session, category_id: int, name: str, description: str |
             raise HTTPException(status_code=400, detail="Outra categoria já existe com esse nome")
         if len(name) < 2:
             raise HTTPException(status_code=400, detail="Nome deve ter 2 ou mais caracteres")
+        if len(name) > 80:
+            raise HTTPException(status_code=400, detail="Nome deve ter no máximo 80 caracteres")
         
         category.name = name
     
     if description is not None:
-        if len(description) > 500:
-            raise HTTPException(status_code=400, detail="Descrição deve ter no máximo 500 caracteres")
+        if len(description) > 255:
+            raise HTTPException(status_code=400, detail="Descrição deve ter no máximo 255 caracteres")
         category.description = description
 
     db.commit()

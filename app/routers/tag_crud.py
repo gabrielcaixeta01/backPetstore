@@ -10,8 +10,8 @@ router = APIRouter(prefix="/tag", tags=["CRUD de Tags"])
 
 @router.post("", status_code=201, response_model=Tag)
 def create_tag(
-    name: str = Query(...),
-    description: str | None = Query(None),
+    name: str = Query(..., min_length=2, max_length=80),
+    description: str | None = Query(None, max_length=255),
     current_user: UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
@@ -33,8 +33,8 @@ def get_tag(id: int, db: Session = Depends(get_db)):
 @router.put("/{id}", response_model=Tag)
 def update_tag(
     id: int,
-    name: str | None = Query(None),
-    description: str | None = Query(None),
+    name: str | None = Query(None, min_length=2, max_length=80),
+    description: str | None = Query(None, max_length=255),
     current_user: UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):

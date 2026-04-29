@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from decimal import Decimal
 
 from app.schemas.models import Service
 
@@ -8,23 +9,25 @@ def create_service(
     db: Session,
     name: str,
     description: str | None = None,
-    price: float | None = None,
+    price: Decimal | None = None,
 ):
-    if not name.strip():
+    stripped_name = name.strip()
+
+    if not stripped_name:
         raise HTTPException(status_code=400, detail="Nome do serviço é obrigatório")
     
-    if len(name.strip()) < 2 or len(name.strip()) > 120:
+    if len(stripped_name) < 2 or len(stripped_name) > 120:
         raise HTTPException(status_code=400, detail="Nome do serviço deve conter entre 2 e 120 caracteres")
     
-    if description and len(description) > 200:
-        raise HTTPException(status_code=400, detail="Descrição do serviço deve conter no máximo 200 caracteres")
+    if description and len(description) > 500:
+        raise HTTPException(status_code=400, detail="Descrição do serviço deve conter no máximo 500 caracteres")
 
     if price is None:
         raise HTTPException(status_code=400, detail="Preço do serviço é obrigatório")
     if price < 0:
         raise HTTPException(status_code=400, detail="Preço do serviço não pode ser negativo")
 
-    service = Service(name=name.strip(), description=description, price=price)
+    service = Service(name=stripped_name, description=description, price=price)
     db.add(service)
     db.commit()
     db.refresh(service)
@@ -43,7 +46,7 @@ def update_service(
     service_id: int,
     name: str | None = None,
     description: str | None = None,
-    price: float | None = None,
+    price: Decimal | None = None,
 ):
     service = get_service(db, service_id)
 
@@ -55,8 +58,8 @@ def update_service(
             raise HTTPException(status_code=400, detail="Nome do serviço deve conter entre 2 e 120 caracteres")
         service.name = stripped_name
     if description is not None:
-        if len(description) > 200:
-            raise HTTPException(status_code=400, detail="Descrição do serviço deve conter no máximo 200 caracteres")
+        if len(description) > 500:
+            raise HTTPException(status_code=400, detail="Descrição do serviço deve conter no máximo 500 caracteres")
         service.description = description
     if price is not None:
         if price < 0:

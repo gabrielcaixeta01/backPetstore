@@ -10,8 +10,8 @@ router = APIRouter(prefix="/category", tags=["CRUD de Categorias"])
 
 @router.post("", status_code=201, response_model=Category)
 def create_category(
-    name: str = Query(...),
-    description: str | None = Query(None),
+    name: str = Query(..., min_length=2, max_length=80),
+    description: str | None = Query(None, max_length=255),
     current_user: UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
@@ -33,8 +33,8 @@ def get_category(id: int, db: Session = Depends(get_db)):
 @router.put("/{id}", response_model=Category)
 def update_category(
     id: int,
-    name: str = Query(...),
-    description: str | None = Query(None),
+    name: str = Query(..., min_length=2, max_length=80),
+    description: str | None = Query(None, max_length=255),
     current_user: UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):

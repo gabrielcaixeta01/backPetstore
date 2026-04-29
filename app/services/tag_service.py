@@ -12,9 +12,11 @@ def create_tag(db: Session, name: str, description: str | None = None):
     
     if len(name) < 2:
         raise HTTPException(status_code=400, detail="Nome deve ter 2 ou mais caracteres")
+    if len(name) > 80:
+        raise HTTPException(status_code=400, detail="Nome deve ter no máximo 80 caracteres")
     
-    if description and len(description) > 500:
-        raise HTTPException(status_code=400, detail="Descrição deve ter no máximo 500 caracteres")
+    if description and len(description) > 255:
+        raise HTTPException(status_code=400, detail="Descrição deve ter no máximo 255 caracteres")
     
     db_tag = Tag(name=name, description=description )
     db.add(db_tag)
@@ -35,12 +37,14 @@ def update_tag(db: Session, tag_id: int, name: str, description: str | None = No
         name = name.strip()
         if len(name) < 2:
             raise HTTPException(status_code=400, detail="Nome deve ter 2 ou mais caracteres")
+        if len(name) > 80:
+            raise HTTPException(status_code=400, detail="Nome deve ter no máximo 80 caracteres")
         if db.query(Tag).filter(Tag.name == name, Tag.id != tag_id).first():
             raise HTTPException(status_code=400, detail="Outra tag já existe com esse nome")
         tag.name = name
     if description is not None:
-        if len(description) > 500:
-            raise HTTPException(status_code=400, detail="Descrição deve ter no máximo 500 caracteres")
+        if len(description) > 255:
+            raise HTTPException(status_code=400, detail="Descrição deve ter no máximo 255 caracteres")
         tag.description = description
 
     db.commit()
