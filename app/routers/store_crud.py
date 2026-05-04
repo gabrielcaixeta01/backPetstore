@@ -72,9 +72,12 @@ def update_store(
 	street: str | None = Query(None),
 	neighborhood: str | None = Query(None),
 	number: str | None = Query(None),
+	current_user: UserModel = Depends(get_current_active_user),
 	db: Session = Depends(get_db),
 ) -> Store:
 	
+	if not getattr(current_user, "is_superuser", False):
+		raise HTTPException(status_code=403, detail="Apenas superusers podem atualizar lojas")
 
 	updated_store = store_service.update_store(
 		db=db,
@@ -95,6 +98,9 @@ def update_store(
 
 
 @router.delete("/{store_id}", status_code=200, response_model=dict)
-def delete_store(store_id: int, db: Session = Depends(get_db)) -> dict:
+def delete_store(store_id: int, current_user: UserModel = Depends(get_current_active_user), db: Session = Depends(get_db)) -> dict:
+	if not getattr(current_user, "is_superuser", False):
+		raise HTTPException(status_code=403, detail="Apenas superusers podem deletar lojas")
+
 	store_service.delete_store(db, store_id)
 	return {"message": "Loja deletada com sucesso"}
