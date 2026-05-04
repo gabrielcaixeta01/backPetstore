@@ -68,6 +68,9 @@ def create_user(
     if normalized_profile_type not in ALLOWED_PROFILE_TYPES:
         raise HTTPException(status_code=400, detail="Perfil inválido. Use 'cliente'/'client' ou 'funcionario'/'employee'")
 
+    if is_superuser and normalized_profile_type != "funcionario":
+        raise HTTPException(status_code=400, detail="Superusers devem ter perfil 'funcionario'")
+
     if not name:
         raise HTTPException(status_code=400, detail="Nome do usuário é obrigatório")
     
@@ -203,7 +206,6 @@ def update_user(
         email: str | None = None,
     password: str | None = None,
         phone: str | None = None,
-        profile_type: str | None = None,
         cpf: str | None = None,
         cnpj: str | None = None,
         active: bool | None = None,
@@ -220,11 +222,7 @@ def update_user(
     ):
 
     user = get_user(db, user_id=user_id)
-    normalized_profile_type = _normalize_profile_type(profile_type)
     normalized_client_type = _normalize_client_type(client_type)
-
-    if profile_type is not None and normalized_profile_type not in ALLOWED_PROFILE_TYPES:
-        raise HTTPException(status_code=400, detail="Perfil inválido. Use 'cliente'/'client' ou 'funcionario'/'employee'")
 
     if name is not None and not name.strip():
         raise HTTPException(status_code=400, detail="Nome do usuário é obrigatório")
@@ -266,23 +264,22 @@ def update_user(
     if resulting_cpf is not None and resulting_cnpj is not None:
         raise HTTPException(status_code=400, detail="CPF e CNPJ não podem ser preenchidos ao mesmo tempo")
 
-    if normalized_profile_type == "cliente" and any(value is not None for value in [employee_code, job_title, salary, hired_at, store_id]):
+    if user.profile_type == "cliente" and any(value is not None for value in [employee_code, job_title, salary, hired_at, store_id]):
         raise HTTPException(
             status_code=400,
             detail="Campos de funcionário devem ser nulos quando o perfil for 'cliente'",
         )
 
-    if normalized_profile_type == "funcionario" and any(value is not None for value in [client_type, cep, state, city]):
+    if user.profile_type == "funcionario" and any(value is not None for value in [client_type, cep, state, city]):
         raise HTTPException(
             status_code=400,
             detail="Campos de cliente devem ser nulos quando o perfil for 'funcionario'",
         )
-    
+
     for field, value in {
         "name": name,
         "email": email,
         "phone": phone,
-        "profile_type": normalized_profile_type,
         "cpf": cpf,
         "cnpj": cnpj,
         "active": active,
@@ -294,7 +291,7 @@ def update_user(
     if password is not None:
         user.password_hash = hash_password(password)
 
-    if normalized_profile_type == "cliente":
+    if user.profile_type == "cliente":
         if user.employee_profile is not None:
             db.delete(user.employee_profile)
             user.employee_profile = None
@@ -331,7 +328,7 @@ def update_user(
             if city is not None:
                 user.client_profile.city = city
 
-    if normalized_profile_type == "funcionario":
+    if user.profile_type == "funcionario":
         if user.client_profile is not None:
             db.delete(user.client_profile)
             user.client_profile = None

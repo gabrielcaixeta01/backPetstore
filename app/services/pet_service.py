@@ -173,23 +173,13 @@ def update_pet(
     pet = get_pet(db, pet_id)
     loaded_tags = _load_tags(db, tag_ids)
 
-    updates = {
-        "name": name,
-        "breed": breed,
-        "sex": sex,
-        "size": size,
-        "weight": weight,
-        "health_notes": health_notes,
-        "category_id": category_id,
-        "owner_id": owner_id,
-    }
-
-    for key, value in updates.items():
-        if value is not None:
-            setattr(pet, key, value)
-
-    if pet.name is not None:
-        pet.name = pet.name.strip()
+    if name is not None:
+        name = name.strip()
+        if not name:
+            raise HTTPException(status_code=400, detail="Nome do pet é obrigatório")
+        if len(name) < 2 or len(name) > 120:
+            raise HTTPException(status_code=400, detail="Nome do pet deve conter entre 2 e 120 caracteres")
+        pet.name = name
 
     if not pet.name:
         raise HTTPException(status_code=400, detail="Nome do pet é obrigatório")
@@ -197,43 +187,68 @@ def update_pet(
     if len(pet.name) < 2 or len(pet.name) > 120:
         raise HTTPException(status_code=400, detail="Nome do pet deve conter entre 2 e 120 caracteres")
 
+    if breed is not None:
+        if not breed:
+            raise HTTPException(status_code=400, detail="Raça do pet é obrigatória")
+        if len(breed) > 80:
+            raise HTTPException(status_code=400, detail="Raça do pet deve conter no máximo 80 caracteres")
+        pet.breed = breed
+
     if not pet.breed:
         raise HTTPException(status_code=400, detail="Raça do pet é obrigatória")
 
     if len(pet.breed) > 80:
         raise HTTPException(status_code=400, detail="Raça do pet deve conter no máximo 80 caracteres")
 
-    normalized_sex = _normalize_sex(pet.sex)
-    if normalized_sex is None:
-        raise HTTPException(status_code=400, detail="Sexo do pet inválido. Use 'M', 'F', 'macho' ou 'femea'")
-    pet.sex = normalized_sex
+    if sex is not None:
+        normalized_sex = _normalize_sex(sex)
+        if normalized_sex is None:
+            raise HTTPException(status_code=400, detail="Sexo do pet inválido. Use 'M', 'F', 'macho' ou 'femea'")
+        pet.sex = normalized_sex
+
+    if size is not None:
+        if not size:
+            raise HTTPException(status_code=400, detail="Tamanho do pet é obrigatório")
+        pet.size = size
 
     if not pet.size:
         raise HTTPException(status_code=400, detail="Tamanho do pet é obrigatório")
+
+    if weight is not None:
+        if weight < 0:
+            raise HTTPException(status_code=400, detail="Peso do pet não pode ser negativo")
+        pet.weight = weight
 
     if pet.weight is None:
         raise HTTPException(status_code=400, detail="Peso do pet é obrigatório")
     if pet.weight < 0:
         raise HTTPException(status_code=400, detail="Peso do pet não pode ser negativo")
 
+    if health_notes is not None:
+        if len(health_notes) > 500:
+            raise HTTPException(status_code=400, detail="Anotações de saúde devem conter no máximo 500 caracteres")
+        pet.health_notes = health_notes
+
     if pet.health_notes and len(pet.health_notes) > 500:
         raise HTTPException(status_code=400, detail="Anotações de saúde devem conter no máximo 500 caracteres")
+
+    if category_id is not None:
+        category = db.query(Category).filter(Category.id == category_id).first()
+        if not category:
+            raise HTTPException(status_code=404, detail=f"Categoria com id {category_id} não encontrada")
+        pet.category_id = category_id
+
+    if owner_id is not None:
+        owner = db.query(ClientModel).filter(ClientModel.user_id == owner_id).first()
+        if not owner:
+            raise HTTPException(status_code=404, detail=f"Cliente (dono) com id {owner_id} não encontrado")
+        pet.owner_id = owner_id
 
     if pet.category_id is None:
         raise HTTPException(status_code=400, detail="Categoria do pet é obrigatória")
 
     if pet.owner_id is None:
         raise HTTPException(status_code=400, detail="Dono do pet é obrigatório")
-
-    if category_id is not None:
-        category = db.query(Category).filter(Category.id == category_id).first()
-        if not category:
-            raise HTTPException(status_code=404, detail=f"Categoria com id {category_id} não encontrada")
-
-    if owner_id is not None:
-        owner = db.query(ClientModel).filter(ClientModel.user_id == owner_id).first()
-        if not owner:
-            raise HTTPException(status_code=404, detail=f"Cliente (dono) com id {owner_id} não encontrado")
 
     duplicated_pet = (
         db.query(Pet)
