@@ -123,6 +123,9 @@ def update_user(
 
 
 @router.delete("/{user_id}", status_code=200, response_model=dict)
-def delete_user(user_id: int, db: Session = Depends(get_db)) -> dict:
+def delete_user(user_id: int, current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)) -> dict:
+    if current_user.profile_type != "admin" and current_user.id != user_id:
+        return {"message": "Não é permitido deletar outro usuário"}
+
     user_service.delete_user(db, user_id)
     return {"message": "Usuário deletado com sucesso"}
