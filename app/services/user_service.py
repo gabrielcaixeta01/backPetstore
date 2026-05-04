@@ -3,7 +3,7 @@ from decimal import Decimal
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 from app.core.security import hash_password
-from app.schemas.models import ClientModel, EmployeeModel, UserModel
+from app.schemas.models import ClientModel, EmployeeModel, Store, UserModel
 
 
 ALLOWED_PROFILE_TYPES = {"cliente", "funcionario"}
@@ -144,6 +144,28 @@ def create_user(
                 status_code=400,
                 detail="Campos de cliente devem ser nulos quando o perfil for 'funcionario'",
             )
+
+        missing_employee_fields = []
+        if not employee_code:
+            missing_employee_fields.append("employee_code")
+        if not job_title:
+            missing_employee_fields.append("job_title")
+        if salary is None:
+            missing_employee_fields.append("salary")
+        if hired_at is None:
+            missing_employee_fields.append("hired_at")
+        if store_id is None:
+            missing_employee_fields.append("store_id")
+        if missing_employee_fields:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Campos obrigatórios para funcionário ausentes: {', '.join(missing_employee_fields)}",
+            )
+
+        store = db.query(Store).filter(Store.id == store_id).first()
+        if not store:
+            raise HTTPException(status_code=404, detail=f"Loja com id {store_id} não encontrada")
+
         db.add(
             EmployeeModel(
                 user_id=db_user.id,
@@ -236,6 +258,13 @@ def update_user(
     if password is not None and len(password) < 6:
         raise HTTPException(status_code=400, detail="Senha deve conter ao menos 6 caracteres")
 
+    if cpf is not None and cnpj is not None:
+        raise HTTPException(status_code=400, detail="CPF e CNPJ não podem ser preenchidos ao mesmo tempo")
+
+    resulting_cpf = cpf if cpf is not None else user.cpf
+    resulting_cnpj = cnpj if cnpj is not None else user.cnpj
+    if resulting_cpf is not None and resulting_cnpj is not None:
+        raise HTTPException(status_code=400, detail="CPF e CNPJ não podem ser preenchidos ao mesmo tempo")
 
     if normalized_profile_type == "cliente" and any(value is not None for value in [employee_code, job_title, salary, hired_at, store_id]):
         raise HTTPException(
@@ -271,6 +300,20 @@ def update_user(
             user.employee_profile = None
 
         if user.client_profile is None:
+            missing_client_fields = []
+            if not normalized_client_type:
+                missing_client_fields.append("client_type")
+            if not cep:
+                missing_client_fields.append("cep")
+            if not state:
+                missing_client_fields.append("state")
+            if not city:
+                missing_client_fields.append("city")
+            if missing_client_fields:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Campos obrigatórios para criar perfil de cliente: {', '.join(missing_client_fields)}",
+                )
             user.client_profile = ClientModel(
                 user_id=user.id,
                 client_type=normalized_client_type,
@@ -294,6 +337,25 @@ def update_user(
             user.client_profile = None
 
         if user.employee_profile is None:
+            missing_employee_fields = []
+            if not employee_code:
+                missing_employee_fields.append("employee_code")
+            if not job_title:
+                missing_employee_fields.append("job_title")
+            if salary is None:
+                missing_employee_fields.append("salary")
+            if hired_at is None:
+                missing_employee_fields.append("hired_at")
+            if store_id is None:
+                missing_employee_fields.append("store_id")
+            if missing_employee_fields:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Campos obrigatórios para criar perfil de funcionário: {', '.join(missing_employee_fields)}",
+                )
+            store = db.query(Store).filter(Store.id == store_id).first()
+            if not store:
+                raise HTTPException(status_code=404, detail=f"Loja com id {store_id} não encontrada")
             user.employee_profile = EmployeeModel(
                 user_id=user.id,
                 employee_code=employee_code,
@@ -312,6 +374,9 @@ def update_user(
             if hired_at is not None:
                 user.employee_profile.hired_at = hired_at
             if store_id is not None:
+                store = db.query(Store).filter(Store.id == store_id).first()
+                if not store:
+                    raise HTTPException(status_code=404, detail=f"Loja com id {store_id} não encontrada")
                 user.employee_profile.store_id = store_id
 
     db.commit()
@@ -325,4 +390,8 @@ def delete_user(db: Session, user_id: int):
     db.commit()
 
 def list_users(db: Session) -> list[UserModel]:
-    return db.query(UserModel).all()
+    return (
+        db.query(UserModel)
+        .options(joinedload(UserModel.client_profile), joinedload(UserModel.employee_profile))
+        .all()
+    )

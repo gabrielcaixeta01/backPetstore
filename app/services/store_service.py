@@ -33,17 +33,15 @@ def create_store(
         "street": street,
         "neighborhood": neighborhood,
         "number": number,
+        "cep": cep,
     }
     missing = [field for field, value in required_fields.items() if value in (None, "")]
     if missing:
         raise HTTPException(status_code=400, detail=f"Campos obrigatórios ausentes: {', '.join(missing)}")
 
-    exists_name = db.query(Store).filter(Store.name == name).first()
     exists_cnpj = db.query(Store).filter(Store.cnpj == cnpj).first()
     exists_email = db.query(Store).filter(Store.email == email).first()
 
-    if exists_name:
-        raise HTTPException(status_code=400, detail="Loja já existe com esse nome")
     if exists_cnpj:
         raise HTTPException(status_code=400, detail="Loja já existe com esse CNPJ")
     if exists_email:
@@ -117,6 +115,14 @@ def update_store(
 ):
 
     store = get_store(db, store_id)
+
+    exists_cnpj = db.query(Store).filter(Store.cnpj == cnpj, Store.id != store_id).first() if cnpj else None
+    exists_email = db.query(Store).filter(Store.email == email, Store.id != store_id).first() if email else None
+
+    if exists_cnpj:
+        raise HTTPException(status_code=400, detail="Loja já existe com esse CNPJ")
+    if exists_email:
+        raise HTTPException(status_code=400, detail="Loja já existe com esse email")
 
     if name is not None:
         name = name.strip()

@@ -33,7 +33,7 @@ def get_category(id: int, db: Session = Depends(get_db)):
 @router.put("/{id}", response_model=Category)
 def update_category(
     id: int,
-    name: str = Query(..., min_length=2, max_length=80),
+    name: str | None = Query(None, min_length=2, max_length=80),
     description: str | None = Query(None, max_length=255),
     current_user: UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db),

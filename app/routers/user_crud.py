@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services import user_service
@@ -34,9 +34,9 @@ def create_user(
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ) -> User:
-    
+    if is_superuser and not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Apenas superusers podem criar outros superusers")
 
-    
     created_user = user_service.create_user(
         db=db,
         name=name,
@@ -63,12 +63,12 @@ def create_user(
 
 
 @router.get("/users", response_model=list[User])
-def list_users(db: Session = Depends(get_db)):
+def list_users(_: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
     return user_service.list_users(db)
 
 
 @router.get("/{user_id}", response_model=User)
-def get_user(user_id: int, db: Session = Depends(get_db)) -> User:
+def get_user(user_id: int, _: User = Depends(get_current_active_user), db: Session = Depends(get_db)) -> User:
     return user_service.get_user(db, user_id)
 
 
@@ -96,7 +96,13 @@ def update_user(
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ) -> User:
-   
+    
+    if not current_user.is_superuser and current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Não é permitido atualizar outro usuário")
+
+    if is_superuser is not None and not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Apenas superusers podem alterar o campo is_superuser")
+
     updated_user = user_service.update_user(
         db=db,
         user_id=user_id,
@@ -124,8 +130,8 @@ def update_user(
 
 @router.delete("/{user_id}", status_code=200, response_model=dict)
 def delete_user(user_id: int, current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)) -> dict:
-    if current_user.profile_type != "admin" and current_user.id != user_id:
-        return {"message": "Não é permitido deletar outro usuário"}
+    if not current_user.is_superuser and current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Não é permitido deletar outro usuário")
 
     user_service.delete_user(db, user_id)
     return {"message": "Usuário deletado com sucesso"}

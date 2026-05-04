@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services import pet_service
@@ -25,7 +25,6 @@ def create_pet(
     db: Session = Depends(get_db),
 ):
     if getattr(current_user, "profile_type", None) == "cliente" and owner_id != current_user.id:
-        from fastapi import HTTPException
         raise HTTPException(status_code=403, detail="Clientes só podem criar pets para si mesmos")
 
     created_pet = pet_service.create_pet(
@@ -68,8 +67,7 @@ def update_pet(
     db: Session = Depends(get_db),
 ):
     pet = pet_service.get_pet(db, pet_id)
-    if pet.owner_id != current_user.id:
-        from fastapi import HTTPException
+    if not (current_user.is_superuser or current_user.profile_type == "funcionario" or pet.owner_id == current_user.id):
         raise HTTPException(status_code=403, detail="Você não tem permissão para editar este pet")
 
     updated_pet = pet_service.update_pet(
@@ -90,8 +88,7 @@ def update_pet(
 @router.delete("/{pet_id}", status_code=200, response_model=dict)
 def delete_pet(pet_id: int, current_user: UserModel = Depends(get_current_active_user), db: Session = Depends(get_db)):
     pet = pet_service.get_pet(db, pet_id)
-    if pet.owner_id != current_user.id:
-        from fastapi import HTTPException
+    if not (current_user.is_superuser or current_user.profile_type == "funcionario" or pet.owner_id == current_user.id):
         raise HTTPException(status_code=403, detail="Você não tem permissão para deletar este pet")
     pet_service.delete_pet(db, pet_id)
     return {"message": "Pet deletado com sucesso"}

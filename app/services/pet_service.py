@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from decimal import Decimal
 from sqlalchemy import func
 from sqlalchemy.orm import Session, selectinload
-from app.schemas.models import Pet, Tag
+from app.schemas.models import Category, ClientModel, Pet, Tag
 
 
 VALID_SEX_VALUES = {
@@ -17,7 +17,7 @@ VALID_SEX_VALUES = {
 def _normalize_sex(sex: str | None) -> str | None:
     if sex is None:
         return None
-    return VALID_SEX_VALUES.get(sex.strip())
+    return VALID_SEX_VALUES.get(sex.strip().lower(), None)
 
 
 def _normalize_tag_ids(tag_ids: list[int | str] | None) -> list[int] | None:
@@ -106,6 +106,14 @@ def create_pet(
 
     if owner_id is None:
         raise HTTPException(status_code=400, detail="Dono do pet é obrigatório para criar pet")
+
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail=f"Categoria com id {category_id} não encontrada")
+
+    owner = db.query(ClientModel).filter(ClientModel.user_id == owner_id).first()
+    if not owner:
+        raise HTTPException(status_code=404, detail=f"Cliente (dono) com id {owner_id} não encontrado")
 
     loaded_tags = _load_tags(db, tag_ids)
 
@@ -216,6 +224,16 @@ def update_pet(
 
     if pet.owner_id is None:
         raise HTTPException(status_code=400, detail="Dono do pet é obrigatório")
+
+    if category_id is not None:
+        category = db.query(Category).filter(Category.id == category_id).first()
+        if not category:
+            raise HTTPException(status_code=404, detail=f"Categoria com id {category_id} não encontrada")
+
+    if owner_id is not None:
+        owner = db.query(ClientModel).filter(ClientModel.user_id == owner_id).first()
+        if not owner:
+            raise HTTPException(status_code=404, detail=f"Cliente (dono) com id {owner_id} não encontrado")
 
     duplicated_pet = (
         db.query(Pet)

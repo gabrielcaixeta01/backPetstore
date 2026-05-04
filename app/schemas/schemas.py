@@ -35,7 +35,6 @@ class StoreCreate(BaseModel):
     neighborhood: str = Field(max_length=120)
     number: str = Field(max_length=20)
     active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class StoreUpdate(BaseModel):
@@ -50,7 +49,6 @@ class StoreUpdate(BaseModel):
     neighborhood: Optional[str] = Field(default=None, max_length=120)
     number: Optional[str] = Field(default=None, max_length=20)
     active: Optional[bool] = None
-    created_at: Optional[datetime] = None
 
 
 class User(BaseModel):
@@ -197,10 +195,10 @@ class TagUpdate(BaseModel):
 class Pet(BaseModel):
     id: int
     name: str
-    breed: Optional[str] = None
-    sex: Optional[str] = None
-    size: Optional[str] = None
-    weight: Optional[Decimal] = None
+    breed: str
+    sex: str
+    size: str
+    weight: Decimal
     health_notes: Optional[str] = None
     category_id: int
     owner_id: int
@@ -275,7 +273,6 @@ class Appointment(BaseModel):
 
 
 class AppointmentCreate(BaseModel):
-    final_value: Decimal
     service_at: datetime = Field(default_factory=datetime.utcnow)
     payment_method: str
     status: str
@@ -288,7 +285,6 @@ class AppointmentCreate(BaseModel):
 
 
 class AppointmentUpdate(BaseModel):
-    final_value: Optional[Decimal] = None
     service_at: Optional[datetime] = None
     payment_method: Optional[str] = None
     status: Optional[str] = None

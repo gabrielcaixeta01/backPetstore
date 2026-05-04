@@ -76,7 +76,6 @@ def update_appointment(
 
 	appointment = appointment_service.get_appointment(db, id)
 	if not (getattr(current_user, "is_superuser", False) or getattr(current_user, "profile_type", None) == "funcionario" or appointment.client_id == current_user.id):
-		
 		raise HTTPException(status_code=403, detail="Você não tem permissão para atualizar este atendimento")
 
 	updated_appointment = appointment_service.update_appointment(

@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.schemas.models import Appointment, AppointmentService, EmployeeModel, Pet, Service
+from app.schemas.models import Appointment, AppointmentService, ClientModel, EmployeeModel, Pet, Service, Store
 
 
 PAYMENT_METHOD_ALIASES = {
@@ -174,7 +174,15 @@ def create_appointment(
 	_validate_appointment_fields(payment_method=payment_method, status=status, notes=notes)
 	normalized_payment_method = _normalize_payment_method(payment_method)
 	normalized_status = _normalize_status(status)
-	
+
+	store = db.query(Store).filter(Store.id == store_id).first()
+	if not store:
+		raise HTTPException(status_code=404, detail=f"Loja com id {store_id} não encontrada")
+
+	client = db.query(ClientModel).filter(ClientModel.user_id == client_id).first()
+	if not client:
+		raise HTTPException(status_code=404, detail=f"Cliente com id {client_id} não encontrado")
+
 	_require_employee_belongs_to_store(db, employee_id, store_id)
 
 	if service_ids is None:
@@ -261,12 +269,12 @@ def update_appointment(
 	if service_ids is not None and not service_ids:
 		raise HTTPException(status_code=400, detail="Ao menos um serviço é obrigatório quando service_ids é informado")
 
-	if pet_id is not None:
-		pet = db.query(Pet).filter(Pet.id == pet_id).first()
+	if pet_id is not None or client_id is not None:
+		effective_pet_id = pet_id if pet_id is not None else appointment.pet_id
+		effective_client_id = client_id if client_id is not None else appointment.client_id
+		pet = db.query(Pet).filter(Pet.id == effective_pet_id).first()
 		if not pet:
 			raise HTTPException(status_code=404, detail="Pet não encontrado")
-		
-		effective_client_id = client_id if client_id is not None else appointment.client_id
 		if pet.owner_id != effective_client_id:
 			raise HTTPException(
 				status_code=400,
