@@ -3,7 +3,7 @@ from decimal import Decimal
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 from app.core.security import hash_password
-from app.schemas.models import ClientModel, EmployeeModel, Store, UserModel
+from app.schemas.models import ClientModel, EmployeeModel, Pet, Store, UserModel
 
 
 ALLOWED_PROFILE_TYPES = {"cliente", "funcionario"}
@@ -383,6 +383,11 @@ def update_user(
 
 def delete_user(db: Session, user_id: int):
     user = get_user(db, user_id=user_id)
+    
+    # Deletar todos os pets do cliente se for um cliente
+    if user.profile_type == "cliente":
+        db.query(Pet).filter(Pet.owner_id == user_id).delete(synchronize_session=False)
+    
     db.delete(user)
     db.commit()
 
