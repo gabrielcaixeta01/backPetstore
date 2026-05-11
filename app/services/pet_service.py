@@ -95,8 +95,8 @@ def create_pet(
 
     if weight is None:
         raise HTTPException(status_code=400, detail="Peso do pet é obrigatório")
-    if weight < 0:
-        raise HTTPException(status_code=400, detail="Peso do pet não pode ser negativo")
+    if weight <= 0:
+        raise HTTPException(status_code=400, detail="Peso do pet deve ser maior que zero")
     
     if health_notes and len(health_notes) > 500:
         raise HTTPException(status_code=400, detail="Anotações de saúde devem conter no máximo 500 caracteres")
@@ -215,14 +215,14 @@ def update_pet(
         raise HTTPException(status_code=400, detail="Tamanho do pet é obrigatório")
 
     if weight is not None:
-        if weight < 0:
-            raise HTTPException(status_code=400, detail="Peso do pet não pode ser negativo")
+        if weight <= 0:
+            raise HTTPException(status_code=400, detail="Peso do pet deve ser maior que zero")
         pet.weight = weight
 
     if pet.weight is None:
         raise HTTPException(status_code=400, detail="Peso do pet é obrigatório")
-    if pet.weight < 0:
-        raise HTTPException(status_code=400, detail="Peso do pet não pode ser negativo")
+    if pet.weight <= 0:
+        raise HTTPException(status_code=400, detail="Peso do pet deve ser maior que zero")
 
     if health_notes is not None:
         if len(health_notes) > 500:
