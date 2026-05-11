@@ -15,6 +15,12 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse
     if user is None or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Email ou senha inválidos")
 
+    if not user.active:
+        raise HTTPException(
+            status_code=403,
+            detail="Esta conta foi desativada. Entre em contato com nossa equipe para reativá-la.",
+        )
+
     access_token = create_access_token(
         {
             "sub": str(user.id),
