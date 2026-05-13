@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\" -Force)",
-      "Bash(Select-Object Name, PSIsContainer)"
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(ls \"c:/Users/gabriel.romero/workspace/\")",
+      "Read(//c/Users/gabriel.romero/workspace/**)"
     ]
   }
 }
