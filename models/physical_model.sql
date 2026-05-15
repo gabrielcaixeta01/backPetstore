@@ -330,3 +330,193 @@ INSERT INTO appointment_services (appointment_id, service_id, charged_value, not
 	(7, 7,  35.00, 'Corte de unhas'),
 	(8, 4, 140.00, 'Dose de reforco aplicada'),
 	(8, 7,  35.00, 'Unhas aparadas');
+
+
+-- ==========================================
+-- DADOS ADICIONAIS — SEED EXPANDIDO
+-- Senha de todos os novos usuarios: 'senha123'
+-- ==========================================
+
+-- Novas lojas (ids 6-9)
+INSERT INTO stores (id, name, cnpj, phone, email, active, created_at, cep, city, state, street, neighborhood, number) VALUES
+	(6, 'Petshop GC Copacabana', '10.000.000/0001-06', '2130006006', 'copacabana@petshopgc.com', TRUE, '2026-01-02 08:00:00', '22010-000', 'Rio de Janeiro', 'RJ', 'Av Atlantica',    'Copacabana', '600'),
+	(7, 'Petshop GC Lourdes',    '10.000.000/0001-07', '3130007007', 'lourdes@petshopgc.com',    TRUE, '2026-01-02 08:10:00', '30170-070', 'Belo Horizonte', 'MG', 'Av do Contorno',  'Lourdes',    '700'),
+	(8, 'Petshop GC Boa Viagem', '10.000.000/0001-08', '8130008008', 'boaviagem@petshopgc.com',  TRUE, '2026-01-02 08:20:00', '51011-000', 'Recife',         'PE', 'Av Boa Viagem',   'Boa Viagem', '800'),
+	(9, 'Petshop GC Moema',      '10.000.000/0001-09', '1130009009', 'moema@petshopgc.com',      TRUE, '2026-01-02 08:30:00', '04077-020', 'Sao Paulo',      'SP', 'Av Ibirapuera',   'Moema',      '900');
+
+-- Novos usuarios clientes (ids 13-25)
+INSERT INTO users (id, name, email, password_hash, phone, profile_type, cpf, cnpj, active, is_superuser, created_at) VALUES
+	(13, 'Renata Oliveira',  'renata.oliveira@exemplo.com',  '$pbkdf2-sha256$29000$DcFY672XkvIeA.B8b60VYg$60msYdWp1w3tN.VnlcWXxwWz4X5DW4Eo6qFunbGBNHs', '11990013333', 'cliente',    '013.013.013-13', NULL, TRUE, FALSE, '2026-01-22 09:00:00'),
+	(14, 'Samuel Dias',      'samuel.dias@exemplo.com',      '$pbkdf2-sha256$29000$KgWgNCYEYMw55zwnpNQ6hw$ihzmeKRMQ3W8ibNvURIrGaLEebNKDa9iXjh9lZ4hvcM', '21990014444', 'cliente',    '014.014.014-14', NULL, TRUE, FALSE, '2026-01-22 09:10:00'),
+	(15, 'Tatiana Ferreira', 'tatiana.ferreira@exemplo.com', '$pbkdf2-sha256$29000$xLhXKuX8nxOi1Ppf6z3nvA$TXreeCXbloslP9sBxKYZEnuBRCXWIpmTjQRklU3YkZc', '31990015555', 'cliente',    '015.015.015-15', NULL, TRUE, FALSE, '2026-01-22 09:20:00'),
+	(16, 'Ubirajara Silva',  'ubi.silva@exemplo.com',        '$pbkdf2-sha256$29000$yRlD6H2PsRbC2Ns75zzHGA$jUDkfQlFOBvMrNrWOsOr/Dg6Oy79H1g4t4Dz8V9LwvY', '41990016666', 'cliente',    '016.016.016-16', NULL, TRUE, FALSE, '2026-01-22 09:30:00'),
+	(17, 'Vanessa Costa',    'vanessa.costa@exemplo.com',    '$pbkdf2-sha256$29000$ei.FUOrde./9vxcihLAW4g$jXImZBDSCP15L/owqzhdxSkdK5Ad39gbDZdQoJDNxNs',  '71990017777', 'cliente',    '017.017.017-17', NULL, TRUE, FALSE, '2026-01-22 09:40:00'),
+	(18, 'Wagner Barbosa',   'wagner.barbosa@exemplo.com',   '$pbkdf2-sha256$29000$gvA.J2Tsfc95710rReidEw$nzfTaHhKMYQWGvmABORGCChGcuX.kMM1kxTE8eiFN5U', '19990018888', 'cliente',    '018.018.018-18', NULL, TRUE, FALSE, '2026-01-22 09:50:00'),
+	(19, 'Ximena Torres',    'ximena.torres@exemplo.com',    '$pbkdf2-sha256$29000$WYtxznlPaW1N6R2DsFYK4Q$hg5q/0ytfnegkvjex.pUkA/GlkKVLsqKTaJc80cKM3A',  '51990019999', 'cliente',    '019.019.019-19', NULL, TRUE, FALSE, '2026-01-23 09:00:00'),
+	(20, 'Yara Andrade',     'yara.andrade@exemplo.com',     '$pbkdf2-sha256$29000$2FvrPcfYe89Zq1XK2TsH4A$jJQB/k3MPSjKF7gekteQHxr0fW9TB8KDXKk2XEHfbhw',  '85990020000', 'cliente',    '020.020.020-20', NULL, TRUE, FALSE, '2026-01-23 09:10:00'),
+	(21, 'Zeca Rodrigues',   'zeca.rodrigues@exemplo.com',   '$pbkdf2-sha256$29000$KwUAwBgDgHCOcU4JQYhxzg$.vzlrUZlxZ.iErwS49L8x.15mbBcbIfBz3eUkxOEmhs',  '48990021111', 'cliente',    '021.021.021-21', NULL, TRUE, FALSE, '2026-01-23 09:20:00'),
+	(22, 'Amanda Lima',      'amanda.lima@exemplo.com',      '$pbkdf2-sha256$29000$ByCEkLJ2DiEEgBCCcG5t7Q$umHQU9hhwabdzGUnvQzd3KJvSoMTf56nlytrz11Ijn8',  '62990022222', 'cliente',    '022.022.022-22', NULL, TRUE, FALSE, '2026-01-23 09:30:00'),
+	(23, 'Bernardo Farias',  'bernardo.farias@exemplo.com',  '$pbkdf2-sha256$29000$5xwj5JwTonSO8T7H.D/HmA$Zq.zwsjv4ALiE1SdO2EBbS6GB7J6k7nwu20rnqDhiRo',  '11990023333', 'cliente',    '023.023.023-23', NULL, TRUE, FALSE, '2026-01-24 09:00:00'),
+	(24, 'Camila Esteves',   'camila.esteves@exemplo.com',   '$pbkdf2-sha256$29000$DcFY672XkvIeA.B8b60VYg$60msYdWp1w3tN.VnlcWXxwWz4X5DW4Eo6qFunbGBNHs', '21990024444', 'cliente',    '024.024.024-24', NULL, TRUE, FALSE, '2026-01-24 09:10:00'),
+	(25, 'Danilo Queiroz',   'danilo.queiroz@exemplo.com',   '$pbkdf2-sha256$29000$KgWgNCYEYMw55zwnpNQ6hw$ihzmeKRMQ3W8ibNvURIrGaLEebNKDa9iXjh9lZ4hvcM', '31990025555', 'cliente',    '025.025.025-25', NULL, TRUE, FALSE, '2026-01-24 09:20:00');
+
+-- Novos usuarios funcionarios (ids 26-35)
+INSERT INTO users (id, name, email, password_hash, phone, profile_type, cpf, cnpj, active, is_superuser, created_at) VALUES
+	(26, 'Pedro Santos',     'pedro.santos@exemplo.com',     '$pbkdf2-sha256$29000$xLhXKuX8nxOi1Ppf6z3nvA$TXreeCXbloslP9sBxKYZEnuBRCXWIpmTjQRklU3YkZc', '11991260001', 'funcionario','026.026.026-26', NULL, TRUE, FALSE, '2026-01-25 10:00:00'),
+	(27, 'Larissa Mendes',   'larissa.mendes@exemplo.com',   '$pbkdf2-sha256$29000$yRlD6H2PsRbC2Ns75zzHGA$jUDkfQlFOBvMrNrWOsOr/Dg6Oy79H1g4t4Dz8V9LwvY', '11991270002', 'funcionario','027.027.027-27', NULL, TRUE, FALSE, '2026-01-25 10:10:00'),
+	(28, 'Ricardo Gomes',    'ricardo.gomes@exemplo.com',    '$pbkdf2-sha256$29000$ei.FUOrde./9vxcihLAW4g$jXImZBDSCP15L/owqzhdxSkdK5Ad39gbDZdQoJDNxNs',  '11991280003', 'funcionario','028.028.028-28', NULL, TRUE, FALSE, '2026-01-25 10:20:00'),
+	(29, 'Claudia Pereira',  'claudia.pereira@exemplo.com',  '$pbkdf2-sha256$29000$gvA.J2Tsfc95710rReidEw$nzfTaHhKMYQWGvmABORGCChGcuX.kMM1kxTE8eiFN5U', '11991290004', 'funcionario','029.029.029-29', NULL, TRUE, FALSE, '2026-01-25 10:30:00'),
+	(30, 'Fernando Lima',    'fernando.lima@exemplo.com',    '$pbkdf2-sha256$29000$WYtxznlPaW1N6R2DsFYK4Q$hg5q/0ytfnegkvjex.pUkA/GlkKVLsqKTaJc80cKM3A',  '11991300005', 'funcionario','030.030.030-30', NULL, TRUE, FALSE, '2026-01-26 10:00:00'),
+	(31, 'Patricia Souza',   'patricia.souza@exemplo.com',   '$pbkdf2-sha256$29000$2FvrPcfYe89Zq1XK2TsH4A$jJQB/k3MPSjKF7gekteQHxr0fW9TB8KDXKk2XEHfbhw',  '11991310006', 'funcionario','031.031.031-31', NULL, TRUE, FALSE, '2026-01-26 10:10:00'),
+	(32, 'Eduardo Carvalho', 'eduardo.carvalho@exemplo.com', '$pbkdf2-sha256$29000$KwUAwBgDgHCOcU4JQYhxzg$.vzlrUZlxZ.iErwS49L8x.15mbBcbIfBz3eUkxOEmhs',  '11991320007', 'funcionario','032.032.032-32', NULL, TRUE, FALSE, '2026-01-26 10:20:00'),
+	(33, 'Simone Martins',   'simone.martins@exemplo.com',   '$pbkdf2-sha256$29000$ByCEkLJ2DiEEgBCCcG5t7Q$umHQU9hhwabdzGUnvQzd3KJvSoMTf56nlytrz11Ijn8',  '11991330008', 'funcionario','033.033.033-33', NULL, TRUE, FALSE, '2026-01-26 10:30:00'),
+	(34, 'Rodrigo Freitas',  'rodrigo.freitas@exemplo.com',  '$pbkdf2-sha256$29000$5xwj5JwTonSO8T7H.D/HmA$Zq.zwsjv4ALiE1SdO2EBbS6GB7J6k7nwu20rnqDhiRo',  '11991340009', 'funcionario','034.034.034-34', NULL, TRUE, FALSE, '2026-01-27 10:00:00'),
+	(35, 'Nathalia Campos',  'nathalia.campos@exemplo.com',  '$pbkdf2-sha256$29000$DcFY672XkvIeA.B8b60VYg$60msYdWp1w3tN.VnlcWXxwWz4X5DW4Eo6qFunbGBNHs', '11991350010', 'funcionario','035.035.035-35', NULL, TRUE, FALSE, '2026-01-27 10:10:00');
+
+-- Novos clientes
+INSERT INTO clients (user_id, client_type, cep, state, city) VALUES
+	(13, 'pessoa_fisica', '01310-100', 'SP', 'Sao Paulo'),
+	(14, 'pessoa_fisica', '22010-000', 'RJ', 'Rio de Janeiro'),
+	(15, 'pessoa_fisica', '30140-070', 'MG', 'Belo Horizonte'),
+	(16, 'pessoa_fisica', '80420-090', 'PR', 'Curitiba'),
+	(17, 'pessoa_fisica', '40140-110', 'BA', 'Salvador'),
+	(18, 'pessoa_fisica', '13010-010', 'SP', 'Campinas'),
+	(19, 'pessoa_fisica', '90010-180', 'RS', 'Porto Alegre'),
+	(20, 'pessoa_fisica', '60175-047', 'CE', 'Fortaleza'),
+	(21, 'pessoa_fisica', '88010-400', 'SC', 'Florianopolis'),
+	(22, 'pessoa_fisica', '74010-010', 'GO', 'Goiania'),
+	(23, 'pessoa_fisica', '01415-001', 'SP', 'Sao Paulo'),
+	(24, 'pessoa_fisica', '20071-004', 'RJ', 'Rio de Janeiro'),
+	(25, 'pessoa_fisica', '30150-370', 'MG', 'Belo Horizonte');
+
+-- Novos funcionarios
+INSERT INTO employees (user_id, employee_code, job_title, salary, hired_at, store_id) VALUES
+	(26, 'EMP-0007', 'banhista',      2300.00, '2026-01-28', 2),
+	(27, 'EMP-0008', 'tosadora',      2700.00, '2026-01-28', 3),
+	(28, 'EMP-0009', 'veterinario',   5800.00, '2026-01-29', 6),
+	(29, 'EMP-0010', 'recepcionista', 2200.00, '2026-01-29', 6),
+	(30, 'EMP-0011', 'adestrador',    3400.00, '2026-01-30', 7),
+	(31, 'EMP-0012', 'banhista',      2400.00, '2026-01-30', 7),
+	(32, 'EMP-0013', 'veterinario',   5600.00, '2026-01-31', 8),
+	(33, 'EMP-0014', 'gerente',       7000.00, '2026-01-31', 8),
+	(34, 'EMP-0015', 'tosador',       2800.00, '2026-02-01', 9),
+	(35, 'EMP-0016', 'banhista',      2200.00, '2026-02-01', 9);
+
+-- Novos pets (ids 9-30)
+-- category_id: 1=Canino | 2=Felino | 3=Ave | 4=Coelho | 5=Roedor
+INSERT INTO pets (id, name, breed, sex, size, weight, health_notes, category_id, owner_id) VALUES
+	(9,  'Rex',        'Pastor Alemao',          'M', 'grande',  35.00, 'Sem restricoes',                      1, 13),
+	(10, 'Nala',       'Ragdoll',                'F', 'medio',    5.20, 'Alergia alimentar ao trigo',           2, 14),
+	(11, 'Florentina', 'Calopsita',              'F', 'pequeno',  0.08, 'Crescimento de bico monitorado',       3, 15),
+	(12, 'Docinho',    'Angora',                 'M', 'medio',    2.10, 'Escovacao semanal necessaria',         4, 16),
+	(13, 'Chispinha',  'Hamster Anao',           'F', 'pequeno',  0.15, 'Necessita roda giratoria',             5, 17),
+	(14, 'Max',        'Bulldog Frances',        'M', 'pequeno', 12.00, 'Problema respiratorio leve',           1, 18),
+	(15, 'Cleopatra',  'Siames',                 'F', 'pequeno',  3.90, 'Rins sensiveis - dieta especial',      2, 19),
+	(16, 'Piu',        'Periquito Australiano',  'M', 'pequeno',  0.05, 'Sem restricoes',                       3, 20),
+	(17, 'Bolinha',    'Lop Holandes',           'M', 'pequeno',  1.50, 'Dieta rica em feno',                   4, 21),
+	(18, 'Pinky',      'Porquinho-da-india',     'F', 'pequeno',  0.95, 'Animal muito sociavel',                5, 22),
+	(19, 'Duke',       'Rottweiler',             'M', 'grande',  42.00, 'Adestrado e sociavel',                 1, 13),
+	(20, 'Lala',       'Maine Coon',             'F', 'grande',   7.50, 'Pelo longo requer grooming frequente', 2, 14),
+	(21, 'Whisky',     'Poodle Toy',             'M', 'pequeno',  3.20, 'Tosa mensal recomendada',              1, 3),
+	(22, 'Belinha',    'Pinscher',               'F', 'pequeno',  2.80, 'Sem restricoes',                       1, 4),
+	(23, 'Pompom',     'Persa',                  'F', 'medio',    4.10, 'Pelo comprido requer cuidado diario',  2, 5),
+	(24, 'Tobias',     'Beagle',                 'M', 'medio',   15.00, 'Muito curioso e hiperativo',            1, 11),
+	(25, 'Fifi',       'Yorkshire Terrier',      'F', 'pequeno',  2.50, 'Tosa quinzenal recomendada',           1, 18),
+	(26, 'Simba',      'Shiba Inu',              'M', 'medio',   10.50, 'Muito ativo e independente',           1, 23),
+	(27, 'Frida',      'Scottish Fold',          'F', 'medio',    4.30, 'Articulacao monitorada regularmente',  2, 24),
+	(28, 'Gordo',      'Lhasa Apso',             'M', 'pequeno',  7.20, 'Tosa higienica mensal',                1, 25),
+	(29, 'Toto',       'Border Collie',          'M', 'grande',  20.00, 'Alta energia - precisa de atividade',  1, 1),
+	(30, 'Nina',       'Gato Angora',            'F', 'medio',    3.60, 'Pelo requer cuidado diario',           2, 2);
+
+-- Tags para os novos pets
+INSERT INTO pet_tags (pet_id, tag_id) VALUES
+	(9,  5), (9,  3),
+	(10, 2),
+	(11, 5),
+	(12, 4),
+	(13, 3),
+	(14, 2), (14, 4),
+	(15, 1), (15, 2),
+	(16, 5),
+	(17, 4),
+	(18, 5),
+	(19, 3),
+	(20, 1), (20, 6),
+	(21, 5),
+	(22, 5),
+	(23, 1),
+	(24, 3),
+	(25, 6),
+	(26, 5),
+	(27, 1), (27, 4),
+	(28, 6),
+	(29, 3),
+	(30, 2);
+
+-- Novos atendimentos (ids 9-35)
+-- final_value sera recalculado pelos triggers apos INSERT em appointment_services
+INSERT INTO appointments (id, final_value, service_at, payment_method, status, online, notes, store_id, client_id, employee_id, pet_id) VALUES
+	(9,  0.00, '2026-02-10 10:00:00', 'pix',                  'concluído',    FALSE, 'Primeiro atendimento, pet tranquilo',        1, 13,  6, 9),
+	(10, 0.00, '2026-02-11 11:00:00', 'cartão de crédito',    'concluído',    FALSE, 'Tosa estetica finalizada',                   2, 14,  7, 10),
+	(11, 0.00, '2026-02-12 09:30:00', 'dinheiro',             'concluído',    FALSE, 'Consulta de rotina',                         3, 15,  8, 11),
+	(12, 0.00, '2026-02-13 14:00:00', 'pix',                  'concluído',    FALSE, 'Higiene rapida',                             4, 16,  9, 12),
+	(13, 0.00, '2026-02-14 16:00:00', 'cartão de débito',     'concluído',    FALSE, 'Sessao de sociabilizacao incluida',          5, 17, 10, 13),
+	(14, 0.00, '2026-02-15 10:00:00', 'transferência bancária','concluído',   FALSE, 'Pacote banho e tosa completo',               1, 18,  6, 14),
+	(15, 0.00, '2026-02-16 11:30:00', 'pix',                  'em andamento', FALSE, 'Em progresso',                               2, 19, 26, 15),
+	(16, 0.00, '2026-02-17 09:00:00', 'cartão de crédito',    'concluído',    TRUE,  'Teleorientacao veterinaria',                 3, 20,  8, 16),
+	(17, 0.00, '2026-02-18 10:30:00', 'pix',                  'concluído',    FALSE, 'Vacinacao anual em dia',                     6, 21, 28, 17),
+	(18, 0.00, '2026-02-19 14:30:00', 'dinheiro',             'concluído',    FALSE, 'Primeira sessao - progresso otimo',          7, 22, 30, 18),
+	(19, 0.00, '2026-02-20 09:00:00', 'cartão de débito',     'concluído',    FALSE, 'Check-up completo com vacinacao',            8, 23, 32, 26),
+	(20, 0.00, '2026-02-21 11:00:00', 'pix',                  'concluído',    FALSE, 'Tosa estetica e hidratacao',                 9, 24, 34, 27),
+	(21, 0.00, '2026-02-22 10:00:00', 'cartão de crédito',    'concluído',    FALSE, 'Higiene completa com corte de unhas',        1, 25, 12, 28),
+	(22, 0.00, '2026-02-23 15:00:00', 'pix',                  'agendado',     FALSE, 'Sessao de adestramento avancado',            2, 13, 26, 19),
+	(23, 0.00, '2026-02-24 09:30:00', 'dinheiro',             'concluído',    FALSE, 'Banho e escovacao de pelo longo',            3, 14, 27, 20),
+	(24, 0.00, '2026-02-25 10:00:00', 'cartão de débito',     'concluído',    FALSE, 'Consulta de rotina - Border saudavel',       6,  1, 28, 29),
+	(25, 0.00, '2026-02-26 11:00:00', 'pix',                  'concluído',    FALSE, 'Tratamento hidratante realizado',             7,  2, 31, 30),
+	(26, 0.00, '2026-02-27 14:00:00', 'cartão de crédito',    'agendado',     FALSE, 'Tosa estetica agendada',                     8,  3, 33, 21),
+	(27, 0.00, '2026-02-28 09:00:00', 'transferência bancária','concluído',   FALSE, 'Banho simples realizado',                    9,  4, 35, 22),
+	(28, 0.00, '2026-03-01 10:30:00', 'pix',                  'concluído',    FALSE, 'Check-up com protocolo de vacinas',          1,  5,  6, 23),
+	(29, 0.00, '2026-03-02 11:00:00', 'cartão de débito',     'em andamento', FALSE, 'Corte de unhas em andamento',               4, 11,  9, 24),
+	(30, 0.00, '2026-03-03 09:00:00', 'dinheiro',             'concluído',    FALSE, 'Adestramento basico - excelente resposta',   5, 15, 10, 11),
+	(31, 0.00, '2026-03-04 14:30:00', 'pix',                  'cancelado',    FALSE, 'Cliente remarcou para outra data',           2, 16,  7, 12),
+	(32, 0.00, '2026-03-05 10:00:00', 'cartão de crédito',    'concluído',    FALSE, 'Consulta e prescricao realizadas',           6, 17, 28, 13),
+	(33, 0.00, '2026-03-06 11:00:00', 'pix',                  'agendado',     FALSE, 'Tosa quinzenal agendada',                    9, 18, 34, 25),
+	(34, 0.00, '2026-03-07 09:30:00', 'cartão de débito',     'concluído',    FALSE, 'Adestramento - comandos basicos dominados',  7, 19, 30, 15),
+	(35, 0.00, '2026-03-08 10:00:00', 'transferência bancária','concluído',   FALSE, 'Vacinacao e higiene completa',               3, 20,  8, 16);
+
+-- Servicos dos novos atendimentos
+INSERT INTO appointment_services (appointment_id, service_id, charged_value, notes) VALUES
+	(9,  1,  80.00, 'Banho completo realizado com sucesso'),
+	(10, 2,  95.00, 'Tosa estetica finalizada'),
+	(11, 3, 180.00, 'Consulta clinica de rotina'),
+	(12, 7,  35.00, 'Corte de unhas realizado'),
+	(13, 5, 220.00, 'Adestramento com sociabilizacao incluida'),
+	(14, 1,  80.00, 'Banho premium'),
+	(14, 2,  95.00, 'Tosa estetica inclusa no pacote'),
+	(15, 1,  80.00, 'Banho em andamento'),
+	(16, 3, 180.00, 'Consulta via teleorientacao'),
+	(17, 4, 140.00, 'Vacinacao anual aplicada'),
+	(18, 5, 220.00, 'Adestramento - primeira sessao'),
+	(19, 3, 180.00, 'Check-up completo'),
+	(19, 4, 140.00, 'Vacinacao incluida no check-up'),
+	(20, 2,  95.00, 'Tosa estetica realizada'),
+	(20, 6,  60.00, 'Hidratacao de pelagem inclusa'),
+	(21, 1,  80.00, 'Banho completo'),
+	(21, 7,  35.00, 'Corte de unhas'),
+	(22, 5, 220.00, 'Adestramento avancado agendado'),
+	(23, 1,  80.00, 'Banho com escovacao de pelo longo'),
+	(24, 3, 180.00, 'Consulta veterinaria de rotina'),
+	(25, 1,  80.00, 'Banho com produtos hidratantes'),
+	(25, 6,  60.00, 'Hidratacao profunda de pelagem'),
+	(26, 2,  95.00, 'Tosa agendada'),
+	(27, 1,  80.00, 'Banho simples'),
+	(28, 3, 180.00, 'Consulta geral'),
+	(28, 4, 140.00, 'Protocolo de vacinas atualizado'),
+	(29, 7,  35.00, 'Corte de unhas em andamento'),
+	(30, 5, 220.00, 'Sessao de adestramento basico'),
+	(31, 2,  95.00, 'Tosa cancelada pelo cliente'),
+	(32, 3, 180.00, 'Consulta e prescricao'),
+	(33, 2,  95.00, 'Tosa quinzenal agendada'),
+	(34, 5, 220.00, 'Adestramento - comandos basicos'),
+	(35, 4, 140.00, 'Vacinacao anual'),
+	(35, 7,  35.00, 'Corte de unhas incluido');
