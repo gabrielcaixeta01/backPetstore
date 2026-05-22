@@ -149,23 +149,19 @@ def create_appointment(
 	db: Session,
 	store_id: int,
 	client_id: int,
-	employee_id: int,
 	pet_id: int,
 	payment_method: str,
 	service_ids: list[int],
 	service_at: datetime | None,
+	employee_id: int | None = None,
 	online: bool = False,
 	status: str = "agendado",
 	notes: str | None = None,
-
-):	
-
+):
 	if store_id is None:
 		raise HTTPException(status_code=400, detail="Loja é obrigatória")
 	if client_id is None:
 		raise HTTPException(status_code=400, detail="Cliente é obrigatório")
-	if employee_id is None:
-		raise HTTPException(status_code=400, detail="Funcionário é obrigatório")
 	if pet_id is None:
 		raise HTTPException(status_code=400, detail="Pet é obrigatório")
 	if not payment_method:
@@ -183,7 +179,8 @@ def create_appointment(
 	if not client:
 		raise HTTPException(status_code=404, detail=f"Cliente com id {client_id} não encontrado")
 
-	_require_employee_belongs_to_store(db, employee_id, store_id)
+	if employee_id is not None:
+		_require_employee_belongs_to_store(db, employee_id, store_id)
 
 	if service_ids is None:
 		raise HTTPException(status_code=400, detail="Ao menos um serviço é obrigatório")
@@ -258,14 +255,14 @@ def update_appointment(
 	appointment = get_appointment(db, appointment_id)
 	effective_store_id = store_id if store_id is not None else appointment.store_id
 	effective_employee_id = employee_id if employee_id is not None else appointment.employee_id
-	
-	
+
 	effective_services = _load_services(db, service_ids) if service_ids is not None else None
 	_validate_appointment_fields(payment_method=payment_method, status=status, notes=notes)
 	normalized_payment_method = _normalize_payment_method(payment_method)
 	normalized_status = _normalize_status(status)
 
-	_require_employee_belongs_to_store(db, effective_employee_id, effective_store_id)
+	if effective_employee_id is not None:
+		_require_employee_belongs_to_store(db, effective_employee_id, effective_store_id)
 	if service_ids is not None and not service_ids:
 		raise HTTPException(status_code=400, detail="Ao menos um serviço é obrigatório quando service_ids é informado")
 

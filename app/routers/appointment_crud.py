@@ -19,7 +19,7 @@ def create_appointment(
 	notes: str | None = Query(None),
 	store_id: int = Query(...),
 	client_id: int = Query(...),
-	employee_id: int = Query(...),
+	employee_id: int | None = Query(None),
 	pet_id: int = Query(...),
 	service_ids: list[int] = Query(...),
 	current_user: UserModel = Depends(get_current_active_user),

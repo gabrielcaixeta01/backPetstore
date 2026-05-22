@@ -264,7 +264,7 @@ class Appointment(BaseModel):
     notes: Optional[str] = None
     store_id: int
     client_id: int
-    employee_id: int
+    employee_id: Optional[int] = None
     pet_id: int
     services: List["AppointmentService"] = Field(default_factory=list)
 
@@ -280,7 +280,7 @@ class AppointmentCreate(BaseModel):
     notes: Optional[str] = None
     store_id: int
     client_id: int
-    employee_id: int
+    employee_id: Optional[int] = None
     pet_id: int
 
 

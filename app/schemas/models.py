@@ -146,7 +146,7 @@ class Appointment(Base):
     notes = Column(String(500))
     store_id = Column(Integer, ForeignKey("stores.id", ondelete="CASCADE"), nullable=False)
     client_id = Column(Integer, ForeignKey("clients.user_id"), nullable=False)
-    employee_id = Column(Integer, ForeignKey("employees.user_id"), nullable=False)
+    employee_id = Column(Integer, ForeignKey("employees.user_id"), nullable=True)
     pet_id = Column(Integer, ForeignKey("pets.id", ondelete="CASCADE"), nullable=False)
 
     store = relationship("Store", back_populates="appointments")

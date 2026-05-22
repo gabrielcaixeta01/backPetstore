@@ -2,7 +2,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas.schemas import Store
+from app.schemas.schemas import Store, Employee
 from app.schemas.models import UserModel
 from app.core.security import get_current_active_user
 from app.services import store_service
@@ -46,6 +46,12 @@ def create_store(
 		neighborhood=neighborhood,
 		number=number,
 	)
+
+
+@router.get("/{store_id}/employees", response_model=list[Employee])
+def list_store_employees(store_id: int, db: Session = Depends(get_db)) -> list[Employee]:
+	store = store_service.get_store(db, store_id)
+	return store.employees
 
 
 @router.get("/stores", response_model=list[Store])
