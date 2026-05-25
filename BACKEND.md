@@ -249,7 +249,7 @@ Relacionamento N:M com `pets` via tabela `pet_tags`.
 | `final_value` | Numeric(10,2) | Valor total calculado |
 | `service_at` | DateTime | Data e hora do atendimento |
 | `payment_method` | String(20) | Forma de pagamento |
-| `status` | String(20) | `agendado`, `em andamento`, `concluído`, `cancelado` |
+| `status` | String(20) | `agendado`, `concluído`, `cancelado` |
 | `online` | Boolean | Se foi agendado online |
 | `notes` | String(500) | Observações |
 | `store_id` | FK → stores.id | Loja do atendimento |
@@ -413,7 +413,7 @@ Agendamentos de serviços para os pets.
 - `service_ids` (lista de IDs de serviços)
 - O `final_value` é calculado automaticamente pela soma dos serviços
 
-**Status válidos:** `agendado`, `em andamento`, `concluído`, `cancelado`
+**Status válidos:** `agendado`, `concluído`, `cancelado`
 
 **Formas de pagamento:** `dinheiro`, `cartão de crédito`, `cartão de débito`, `pix`, `transferência bancária`
 

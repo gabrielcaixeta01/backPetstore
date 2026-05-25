@@ -25,8 +25,6 @@ PAYMENT_METHOD_ALIASES = {
 APPOINTMENT_STATUS_ALIASES = {
 	"agendado": "agendado",
 	"scheduled": "agendado",
-	"em andamento": "em andamento",
-	"in_progress": "em andamento",
 	"concluído": "concluído",
 	"concluido": "concluído",
 	"completed": "concluído",
@@ -138,7 +136,7 @@ def _validate_appointment_fields(
 	if status is not None and normalized_status is None:
 		raise HTTPException(
 			status_code=400,
-			detail="Status inválido. Use 'agendado', 'em andamento', 'concluído' ou 'cancelado'",
+			detail="Status inválido. Use 'agendado', 'concluído' ou 'cancelado'",
 		)
 
 	if notes is not None and len(notes) > 500:
