@@ -179,6 +179,20 @@ def create_appointment(
 	normalized_payment_method = _normalize_payment_method(payment_method)
 	normalized_status = _normalize_status(status)
 
+	effective_service_at = service_at or datetime.utcnow()
+	effective_status = normalized_status or status
+	now = datetime.utcnow()
+	if effective_service_at < now and effective_status == "agendado":
+		raise HTTPException(
+			status_code=400,
+			detail="Não é possível criar um atendimento com data no passado e status 'agendado'. Use 'atrasado', 'concluído' ou 'cancelado'.",
+		)
+	if effective_service_at > now and effective_status == "atrasado":
+		raise HTTPException(
+			status_code=400,
+			detail="Não é possível criar um atendimento com data futura e status 'atrasado'.",
+		)
+
 	store = db.query(Store).filter(Store.id == store_id).first()
 	if not store:
 		raise HTTPException(status_code=404, detail=f"Loja com id {store_id} não encontrada")
@@ -235,6 +249,7 @@ def create_appointment(
 	_sync_appointment_total(db, appointment)
 	db.commit()
 	db.refresh(appointment)
+	_check_and_mark_delayed(db, appointment)
 	return _sync_appointment_total(db, appointment)
 
 
@@ -269,6 +284,20 @@ def update_appointment(
 	_validate_appointment_fields(payment_method=payment_method, status=status, notes=notes)
 	normalized_payment_method = _normalize_payment_method(payment_method)
 	normalized_status = _normalize_status(status)
+
+	effective_service_at = service_at if service_at is not None else appointment.service_at
+	effective_status = normalized_status if status is not None else appointment.status
+	now = datetime.utcnow()
+	if effective_service_at < now and effective_status == "agendado":
+		raise HTTPException(
+			status_code=400,
+			detail="Não é possível ter um atendimento com data no passado e status 'agendado'. Use 'atrasado', 'concluído' ou 'cancelado'.",
+		)
+	if effective_service_at > now and effective_status == "atrasado":
+		raise HTTPException(
+			status_code=400,
+			detail="Não é possível ter um atendimento com data futura e status 'atrasado'.",
+		)
 
 	if effective_employee_id is not None:
 		_require_employee_belongs_to_store(db, effective_employee_id, effective_store_id)
