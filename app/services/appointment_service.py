@@ -31,6 +31,9 @@ APPOINTMENT_STATUS_ALIASES = {
 	"cancelado": "cancelado",
 	"canceled": "cancelado",
 	"cancelled": "cancelado",
+	"atrasado": "atrasado",
+	"delayed": "atrasado",
+	"late": "atrasado",
 }
 
 
@@ -117,6 +120,13 @@ def _sync_appointment_total(db: Session, appointment: Appointment) -> Appointmen
 	return appointment
 
 
+def _check_and_mark_delayed(db: Session, appointment: Appointment) -> Appointment:
+	if appointment.status == "agendado" and appointment.service_at < datetime.utcnow():
+		appointment.status = "atrasado"
+		db.commit()
+	return appointment
+
+
 def _validate_appointment_fields(
 	payment_method: str | None,
 	status: str | None,
@@ -136,7 +146,7 @@ def _validate_appointment_fields(
 	if status is not None and normalized_status is None:
 		raise HTTPException(
 			status_code=400,
-			detail="Status inválido. Use 'agendado', 'concluído' ou 'cancelado'",
+			detail="Status inválido. Use 'agendado', 'atrasado', 'concluído' ou 'cancelado'",
 		)
 
 	if notes is not None and len(notes) > 500:
@@ -232,6 +242,7 @@ def get_appointment(db: Session, appointment_id: int):
 	appointment = db.query(Appointment).filter(Appointment.id == appointment_id).first()
 	if not appointment:
 		raise HTTPException(status_code=404, detail="Atendimento não encontrado")
+	_check_and_mark_delayed(db, appointment)
 	return _sync_appointment_total(db, appointment)
 
 
@@ -317,5 +328,8 @@ def delete_appointment(db: Session, appointment_id: int):
 	db.commit()
 
 
-def list_appointments( db: Session) -> list[Appointment]:
-	return db.query(Appointment).order_by(Appointment.id).all()
+def list_appointments(db: Session) -> list[Appointment]:
+	appointments = db.query(Appointment).order_by(Appointment.id).all()
+	for appointment in appointments:
+		_check_and_mark_delayed(db, appointment)
+	return appointments

@@ -213,7 +213,7 @@ class PetCreate(BaseModel):
     breed: str = Field(max_length=80)
     sex: str = Field(max_length=20)
     size: str = Field(max_length=20)
-    weight: Decimal = Field(gt=0, decimal_places=2)
+    weight: Decimal = Field(gt=0, le=100, decimal_places=2)
     health_notes: Optional[str] = Field(default=None, max_length=500)
     category_id: int
     owner_id: int
@@ -225,7 +225,7 @@ class PetUpdate(BaseModel):
     breed: Optional[str] = Field(default=None, max_length=80)
     sex: Optional[str] = Field(default=None, max_length=20)
     size: Optional[str] = Field(default=None, max_length=20)
-    weight: Optional[Decimal] = Field(default=None, gt=0, decimal_places=2)
+    weight: Optional[Decimal] = Field(default=None, gt=0, le=100, decimal_places=2)
     health_notes: Optional[str] = Field(default=None, max_length=500)
     category_id: Optional[int] = None
     owner_id: Optional[int] = None
