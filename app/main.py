@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,10 +7,12 @@ from app.routers import auth_crud
 
 app = FastAPI(title="Petstore da Apex")
 
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+_env_origins = os.getenv("CORS_ORIGINS", "")
+origins = (
+    [o.strip() for o in _env_origins.split(",") if o.strip()]
+    if _env_origins
+    else ["http://localhost:5173", "http://127.0.0.1:5173"]
+)
 
 app.add_middleware(
     CORSMiddleware,
