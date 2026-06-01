@@ -14,12 +14,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Petstore da Apex", lifespan=lifespan)
 
+_default_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://apexbrasilpetstore.vercel.app",
+]
 _env_origins = os.getenv("CORS_ORIGINS", "")
-origins = (
-    [o.strip() for o in _env_origins.split(",") if o.strip()]
-    if _env_origins
-    else ["http://localhost:5173", "http://127.0.0.1:5173"]
-)
+_extra = [o.strip() for o in _env_origins.split(",") if o.strip()]
+origins = list(dict.fromkeys(_default_origins + _extra))
 
 app.add_middleware(
     CORSMiddleware,
