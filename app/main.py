@@ -1,11 +1,18 @@
 import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import appointment_crud, category_crud, pet_crud, service_crud, store_crud, tag_crud, user_crud
 from app.routers import auth_crud
+from app.database import initialize_database
 
-app = FastAPI(title="Petstore da Apex")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    initialize_database()
+    yield
+
+app = FastAPI(title="Petstore da Apex", lifespan=lifespan)
 
 _env_origins = os.getenv("CORS_ORIGINS", "")
 origins = (
