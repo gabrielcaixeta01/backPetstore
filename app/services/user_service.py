@@ -148,37 +148,38 @@ def create_user(
                 detail="Campos de cliente devem ser nulos quando o perfil for 'funcionario'",
             )
 
-        missing_employee_fields = []
-        if not employee_code:
-            missing_employee_fields.append("employee_code")
-        if not job_title:
-            missing_employee_fields.append("job_title")
-        if salary is None:
-            missing_employee_fields.append("salary")
-        if hired_at is None:
-            missing_employee_fields.append("hired_at")
-        if store_id is None:
-            missing_employee_fields.append("store_id")
-        if missing_employee_fields:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Campos obrigatórios para funcionário ausentes: {', '.join(missing_employee_fields)}",
-            )
+        if not is_superuser:
+            missing_employee_fields = []
+            if not employee_code:
+                missing_employee_fields.append("employee_code")
+            if not job_title:
+                missing_employee_fields.append("job_title")
+            if salary is None:
+                missing_employee_fields.append("salary")
+            if hired_at is None:
+                missing_employee_fields.append("hired_at")
+            if store_id is None:
+                missing_employee_fields.append("store_id")
+            if missing_employee_fields:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Campos obrigatórios para funcionário ausentes: {', '.join(missing_employee_fields)}",
+                )
 
-        store = db.query(Store).filter(Store.id == store_id).first()
-        if not store:
-            raise HTTPException(status_code=404, detail=f"Loja com id {store_id} não encontrada")
+            store = db.query(Store).filter(Store.id == store_id).first()
+            if not store:
+                raise HTTPException(status_code=404, detail=f"Loja com id {store_id} não encontrada")
 
-        db.add(
-            EmployeeModel(
-                user_id=db_user.id,
-                employee_code=employee_code,
-                job_title=job_title,
-                salary=salary,
-                hired_at=hired_at,
-                store_id=store_id,
+            db.add(
+                EmployeeModel(
+                    user_id=db_user.id,
+                    employee_code=employee_code,
+                    job_title=job_title,
+                    salary=salary,
+                    hired_at=hired_at,
+                    store_id=store_id,
+                )
             )
-        )
 
     db.commit()
     db.refresh(db_user)
