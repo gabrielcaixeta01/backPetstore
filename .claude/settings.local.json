@@ -4,7 +4,10 @@
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\" -Force)",
       "Bash(Select-Object Name, PSIsContainer)",
       "Bash(ls \"c:/Users/gabriel.romero/workspace/\")",
-      "Read(//c/Users/gabriel.romero/workspace/**)"
+      "Read(//c/Users/gabriel.romero/workspace/**)",
+      "Bash(Get-ChildItem -Force)",
+      "Bash(Select-Object -Property Name, FullName)",
+      "PowerShell(python -c \"import secrets; print\\(secrets.token_hex\\(32\\)\\)\")"
     ]
   }
 }
