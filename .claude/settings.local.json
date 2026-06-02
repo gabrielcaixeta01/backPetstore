@@ -7,7 +7,13 @@
       "Read(//c/Users/gabriel.romero/workspace/**)",
       "Bash(Get-ChildItem -Force)",
       "Bash(Select-Object -Property Name, FullName)",
-      "PowerShell(python -c \"import secrets; print\\(secrets.token_hex\\(32\\)\\)\")"
+      "PowerShell(python -c \"import secrets; print\\(secrets.token_hex\\(32\\)\\)\")",
+      "Bash(.venv/Scripts/alembic init *)",
+      "Bash(.venv/Scripts/alembic revision *)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\alembic\\\\versions\\\\806157bd9b03_initial.py\")",
+      "Bash(Rename-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\petstore.db\" \"petstore.db.bak\")",
+      "PowerShell(Rename-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\petstore.db\" \"petstore.db.bak\")",
+      "PowerShell(Rename-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\petstore.db.bak\" \"petstore.db\")"
     ]
   }
 }
