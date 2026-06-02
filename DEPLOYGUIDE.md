@@ -90,3 +90,12 @@ CORS_ORIGINS=https://seu-frontend.vercel.app
 ```
 
 > O `database.py` converte automaticamente `postgresql://` para o formato do psycopg3 — não precisa ajustar a URL manualmente.
+
+
+---
+
+## Variáveis para o Render
+
+SUPERUSER_EMAIL=admin@apexbrasil.com
+SUPERUSER_PASSWORD=<senha-forte>
+EMPLOYEE_DEFAULT_PASSWORD=<senha-para-funcionarios>

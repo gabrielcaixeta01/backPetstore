@@ -6,10 +6,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import appointment_crud, category_crud, pet_crud, service_crud, store_crud, tag_crud, user_crud
 from app.routers import auth_crud
 from app.database import initialize_database
+from app.seed import run_seed
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     initialize_database()
+    run_seed()
     yield
 
 app = FastAPI(title="Petstore da Apex", lifespan=lifespan)
