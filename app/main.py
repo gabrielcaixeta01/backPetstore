@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -8,10 +9,13 @@ from app.routers import auth_crud
 from app.database import initialize_database
 from app.seed import run_seed
 
+logger = logging.getLogger(__name__)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     initialize_database()
     run_seed()
+    logger.warning("CORS allowed origins: %s", origins)
     yield
 
 app = FastAPI(title="Petstore da Apex", lifespan=lifespan)
