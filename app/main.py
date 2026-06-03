@@ -19,7 +19,6 @@ app = FastAPI(title="Petstore da Apex", lifespan=lifespan)
 _default_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://apexbrasilpetstore.vercel.app",
 ]
 _env_origins = os.getenv("CORS_ORIGINS", "")
 _extra = [o.strip() for o in _env_origins.split(",") if o.strip()]

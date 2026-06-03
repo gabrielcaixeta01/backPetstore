@@ -13,7 +13,11 @@
       "Bash(Remove-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\alembic\\\\versions\\\\806157bd9b03_initial.py\")",
       "Bash(Rename-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\petstore.db\" \"petstore.db.bak\")",
       "PowerShell(Rename-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\petstore.db\" \"petstore.db.bak\")",
-      "PowerShell(Rename-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\petstore.db.bak\" \"petstore.db\")"
+      "PowerShell(Rename-Item \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\petstore.db.bak\" \"petstore.db\")",
+      "Bash(dir \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\\\\app\" -Recurse -Filter \"*.py\")",
+      "Bash(Select-Object FullName)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\TrilhaApex\" -Depth 1 | Where-Object { $_.PSIsContainer -eq $false } | Select-Object -ExpandProperty Name)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\gabriel.romero\\\\workspace\\\\frontApex\" -Depth 1 | Where-Object { $_.PSIsContainer -eq $false } | Select-Object -ExpandProperty Name)"
     ]
   }
 }
