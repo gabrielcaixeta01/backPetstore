@@ -216,7 +216,6 @@ def run_seed() -> None:
         logger.info("seed: concluído.")
     except Exception:
         db.rollback()
-        logger.exception("seed: erro — rollback realizado.")
-        raise
+        logger.exception("seed: erro — rollback realizado. App continuará sem dados iniciais.")
     finally:
         db.close()
