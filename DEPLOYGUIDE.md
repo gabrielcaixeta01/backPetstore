@@ -8,7 +8,7 @@
 
 ```
 Vercel (frontend)                   Render (backend + banco)
-apexbrasilpetstore.vercel.app  ──►  trilhaapex.onrender.com
+https://<projeto>.vercel.app   ──►  https://trilhaapex.onrender.com
                                           │
                                     PostgreSQL (Render)
 ```
@@ -29,23 +29,22 @@ apexbrasilpetstore.vercel.app  ──►  trilhaapex.onrender.com
 
 1. Acesse **Render Dashboard → New → PostgreSQL**
 2. Preencha:
+
    | Campo | Valor |
    |-------|-------|
-   | Name | `apex-db` (ou qualquer nome) |
+   | Name | `apex-db` |
    | Database | `apex_db` |
    | User | `apex_user` |
-   | Region | `Ohio (US East)` ou o mais próximo |
+   | Region | `Ohio (US East)` |
    | PostgreSQL Version | **18** |
    | Plan | **Free** |
-3. Clique em **Create Database**
-4. Aguarde o banco subir (~1 min)
-5. Na página do banco, copie a **Internal Database URL** — ela tem o formato:
-   ```
-   postgresql://apex_user:SENHA_GERADA@dpg-XXXXX-a/apex_db
-   ```
-   Guarde essa URL, será usada no próximo passo.
 
-> **Importante:** use a **Internal URL** (não a External URL) para comunicação entre serviços no Render — é mais rápida e não consome a cota de rede externa.
+3. Clique em **Create Database** e aguarde (~1 min)
+4. Na página do banco, copie a **Internal Database URL**:
+   ```
+   postgresql://apex_user:SENHA@dpg-XXXXX-a/apex_db
+   ```
+   > Use sempre a **Internal URL** — ela é mais rápida e não consome cota de rede externa.
 
 ---
 
@@ -54,37 +53,43 @@ apexbrasilpetstore.vercel.app  ──►  trilhaapex.onrender.com
 1. **Render Dashboard → New → Web Service**
 2. Conecte o repositório `TrilhaApex`
 3. Configure:
+
    | Campo | Valor |
    |-------|-------|
-   | Name | `trilhaapex` ← **mantenha esse nome** para a URL não mudar |
+   | Name | `trilhaapex` ← mantenha esse nome para a URL não mudar |
    | Region | Mesma do banco |
    | Branch | `main` |
-   | Runtime | **Docker** (o Render detecta o `Dockerfile` automaticamente) |
+   | Runtime | **Docker** (detectado automaticamente pelo `Dockerfile`) |
    | Plan | **Free** |
 
 4. Na seção **Environment Variables**, adicione **todas** as variáveis abaixo:
 
    | Variável | Valor |
    |----------|-------|
-   | `DATABASE_URL` | Cole a **Internal Database URL** do Passo 1 |
-   | `JWT_SECRET_KEY` | Gere uma chave forte (veja comando abaixo) |
+   | `DATABASE_URL` | Internal Database URL do Passo 1 |
+   | `JWT_SECRET_KEY` | Gere com o comando abaixo |
    | `JWT_ALGORITHM` | `HS256` |
    | `ACCESS_TOKEN_EXPIRE_MINUTES` | `60` |
    | `SUPERUSER_EMAIL` | `admin@apexbrasil.com` |
-   | `SUPERUSER_PASSWORD` | `Admin@2024` (ou outra senha segura) |
+   | `SUPERUSER_PASSWORD` | `Admin@2024` |
    | `EMPLOYEE_DEFAULT_PASSWORD` | `Apex@2024` |
-   | `CORS_ORIGINS` | URL completa do seu frontend no Vercel (ex: `https://front-apex-delta.vercel.app`) |
+   | `CLIENT_DEFAULT_PASSWORD` | `Cliente@2024` |
+   | `CORS_ORIGINS` | URL completa do seu frontend no Vercel |
 
-   **Gerar JWT_SECRET_KEY** (rode no terminal):
+   **Gerar JWT_SECRET_KEY:**
    ```bash
    python -c "import secrets; print(secrets.token_hex(32))"
    ```
 
-5. Clique em **Create Web Service**
-6. Aguarde o build e o deploy (~3-5 min na primeira vez)
-7. Quando aparecer `Live`, teste: `https://trilhaapex.onrender.com/docs`
+   > **Atenção:** `CORS_ORIGINS` deve conter a URL exata do Vercel **sem** barra final.
+   > Exemplo: `https://front-apex-delta.vercel.app`
+   > Se a URL do Vercel mudar, atualize apenas esta variável — sem precisar alterar o código.
 
-> O `Dockerfile` já executa `alembic upgrade head` antes de subir o servidor — as tabelas são criadas automaticamente. O seed roda na primeira inicialização e cria lojas, categorias, tags e usuários padrão.
+5. Clique em **Create Web Service** e aguarde o build (~3-5 min)
+6. Quando aparecer `Live`, teste: `https://trilhaapex.onrender.com/docs`
+
+> O `Dockerfile` executa `alembic upgrade head` automaticamente antes de subir o servidor.
+> O seed roda no primeiro startup e popula lojas, funcionários, serviços, clientes, pets e atendimentos.
 
 ---
 
@@ -93,6 +98,7 @@ apexbrasilpetstore.vercel.app  ──►  trilhaapex.onrender.com
 1. **Vercel Dashboard → Add New → Project**
 2. Importe o repositório `frontApex`
 3. Configure:
+
    | Campo | Valor |
    |-------|-------|
    | Framework Preset | **Vite** |
@@ -105,23 +111,66 @@ apexbrasilpetstore.vercel.app  ──►  trilhaapex.onrender.com
    |----------|-------|
    | `VITE_API_URL` | `https://trilhaapex.onrender.com` |
 
-   > Isso substitui (com prioridade) qualquer valor do arquivo `.env.production` commitado no repositório. Se o nome do serviço Render mudar, atualize **só aqui**, sem precisar commitar código.
-
-5. Clique em **Deploy**
-6. Aguarde o build (~1 min)
-7. Acesse `https://apexbrasilpetstore.vercel.app` e teste o login
+5. Clique em **Deploy** e aguarde (~1 min)
+6. Copie a URL gerada (ex: `https://front-apex-delta.vercel.app`) e coloque em `CORS_ORIGINS` no Render (Passo 2)
+7. Salve as env vars no Render → o serviço reinicia automaticamente
 
 ---
 
-## Credenciais padrão (criadas pelo seed)
+## Dados populados pelo seed
 
-| Usuário | Email | Senha | Perfil |
-|---------|-------|-------|--------|
-| Administrador | `admin@apexbrasil.com` | `Admin@2024` | superuser |
-| Carlos Mendes | `carlos.mendes@apexbrasil.com` | `Apex@2024` | funcionário |
-| Ana Lima | `ana.lima@apexbrasil.com` | `Apex@2024` | funcionário |
-| Pedro Souza | `pedro.souza@apexbrasil.com` | `Apex@2024` | funcionário |
-| Julia Costa | `julia.costa@apexbrasil.com` | `Apex@2024` | funcionário |
+### Lojas
+
+| Nome | CNPJ | Cidade |
+|------|------|--------|
+| Apex Petstore Centro | 11.111.111/0001-11 | São Paulo – SP |
+| Apex Petstore Norte | 22.222.222/0001-22 | São Paulo – SP |
+| Apex Petstore Asa Sul | 33.333.333/0001-33 | Brasília – DF |
+| Apex Petstore Asa Norte | 44.444.444/0001-44 | Brasília – DF |
+| Apex Petstore Plano Piloto | 55.555.555/0001-55 | Brasília – DF |
+
+### Serviços
+
+| Serviço | Preço |
+|---------|-------|
+| Banho | R$ 50,00 |
+| Tosa | R$ 80,00 |
+| Banho e Tosa | R$ 120,00 |
+| Vacinação | R$ 90,00 |
+| Adestramento | R$ 150,00 |
+| Consulta Veterinária | R$ 200,00 |
+| Pet Hotel (diária) | R$ 80,00 |
+| Hidratação | R$ 60,00 |
+
+### Credenciais — Administrador e Funcionários
+
+Senha padrão dos funcionários: **`Apex@2024`** (ou o valor de `EMPLOYEE_DEFAULT_PASSWORD`)
+
+| Nome | Email | Cargo | Loja |
+|------|-------|-------|------|
+| Administrador | `admin@apexbrasil.com` | Administrador do Sistema | Centro |
+| Carlos Mendes | `carlos.mendes@apexbrasil.com` | Veterinário | Centro |
+| Ana Lima | `ana.lima@apexbrasil.com` | Tosadora | Centro |
+| Pedro Souza | `pedro.souza@apexbrasil.com` | Atendente | Norte |
+| Julia Costa | `julia.costa@apexbrasil.com` | Veterinária | Norte |
+| Bruna Almeida | `bruna.almeida@apexbrasil.com` | Veterinária | Asa Sul |
+| Rafael Lima | `rafael.lima@apexbrasil.com` | Tosador | Asa Sul |
+| Marcos Andrade | `marcos.andrade@apexbrasil.com` | Veterinário | Asa Norte |
+| Patrícia Gomes | `patricia.gomes@apexbrasil.com` | Atendente | Asa Norte |
+| Fernanda Vieira | `fernanda.vieira@apexbrasil.com` | Tosadora | Plano Piloto |
+| Diego Carvalho | `diego.carvalho@apexbrasil.com` | Atendente | Plano Piloto |
+
+### Credenciais — Clientes
+
+Senha padrão dos clientes: **`Cliente@2024`** (ou o valor de `CLIENT_DEFAULT_PASSWORD`)
+
+| Nome | Email | Pet |
+|------|-------|-----|
+| Maria Silva | `maria.silva@email.com` | Thor (Labrador, macho) |
+| João Oliveira | `joao.oliveira@email.com` | Mia (Siamês, fêmea) |
+| Ana Pereira | `ana.pereira@email.com` | Bob (Golden Retriever, macho) |
+| Lucas Santos | `lucas.santos@email.com` | Nemo (Peixe-palhaço, macho) |
+| Camila Fernandes | `camila.fernandes@email.com` | Mel (Yorkshire, fêmea) |
 
 ---
 
@@ -129,22 +178,23 @@ apexbrasilpetstore.vercel.app  ──►  trilhaapex.onrender.com
 
 ### Backend — Render Web Service
 
-| Variável | Obrigatória | Descrição | Exemplo |
-|----------|:-----------:|-----------|---------|
-| `DATABASE_URL` | ✅ | URL de conexão PostgreSQL (Internal do Render) | `postgresql://user:pass@host/db` |
-| `JWT_SECRET_KEY` | ✅ | Chave secreta para assinar tokens JWT | `60a1bb6e0cbc9...` |
-| `JWT_ALGORITHM` | ✅ | Algoritmo de assinatura | `HS256` |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | ✅ | Tempo de expiração do token em minutos | `60` |
-| `SUPERUSER_EMAIL` | ✅ | Email do admin criado no seed | `admin@apexbrasil.com` |
-| `SUPERUSER_PASSWORD` | ✅ | Senha do admin (sem essa var, admin não é criado) | `Admin@2024` |
-| `EMPLOYEE_DEFAULT_PASSWORD` | ❌ | Senha padrão dos funcionários seed | `Apex@2024` |
-| `CORS_ORIGINS` | ✅ | URL do frontend no Vercel (separadas por vírgula se houver mais de uma) | `https://seu-projeto.vercel.app` |
+| Variável | Obrigatória | Descrição |
+|----------|:-----------:|-----------|
+| `DATABASE_URL` | ✅ | Internal Database URL do PostgreSQL no Render |
+| `JWT_SECRET_KEY` | ✅ | Chave secreta para assinar tokens JWT |
+| `JWT_ALGORITHM` | ✅ | Algoritmo de assinatura (`HS256`) |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | ✅ | Expiração do token em minutos |
+| `CORS_ORIGINS` | ✅ | URL exata do frontend no Vercel (sem barra final) |
+| `SUPERUSER_EMAIL` | ✅ | Email do admin criado pelo seed |
+| `SUPERUSER_PASSWORD` | ✅ | Senha do admin (sem ela o admin não é criado) |
+| `EMPLOYEE_DEFAULT_PASSWORD` | ❌ | Senha padrão dos funcionários seed (default: `Apex@2024`) |
+| `CLIENT_DEFAULT_PASSWORD` | ❌ | Senha padrão dos clientes seed (default: `Cliente@2024`) |
 
 ### Frontend — Vercel
 
-| Variável | Obrigatória | Descrição | Valor produção |
-|----------|:-----------:|-----------|----------------|
-| `VITE_API_URL` | ✅ | URL base do backend | `https://trilhaapex.onrender.com` |
+| Variável | Obrigatória | Valor |
+|----------|:-----------:|-------|
+| `VITE_API_URL` | ✅ | `https://trilhaapex.onrender.com` |
 
 ---
 
@@ -170,18 +220,18 @@ O Vite faz proxy de `/api/*` para `http://127.0.0.1:8000` — nenhuma configura�
 ## Troubleshooting
 
 ### "No 'Access-Control-Allow-Origin' header"
-- Confirme que o Web Service no Render está com status **Live** (não crashed)
-- Verifique os logs do Render — se o seed ou a conexão com o banco falharem no startup, a API não sobe
-- A URL `https://apexbrasilpetstore.vercel.app` já está hardcoded no backend, então CORS não precisa de configuração extra
+- Verifique se `CORS_ORIGINS` no Render tem a URL exata do Vercel (sem barra final, sem aspas)
+- Após salvar a env var, aguarde o Render reiniciar (~30s) antes de testar novamente
+- Confirme nos logs do Render: busque `CORS allowed origins` para ver a lista ativa
 
-### Seed não criou o admin
-- Confirme que `SUPERUSER_PASSWORD` está definida no Render (sem ela o admin é pulado)
-- Veja os logs do Render por linhas `seed: superuser criado` ou `seed: erro`
+### Seed não criou o admin / clientes / pets
+- Confirme que `SUPERUSER_PASSWORD` está definida no Render
+- Veja os logs do Render por linhas `seed: ... criado` ou `seed: erro`
 
 ### Render "Service unavailable"
-- O free tier hiberna após 15 min de inatividade — o primeiro request demora ~30s para "acordar"
+- O free tier hiberna após 15 min de inatividade — o primeiro request demora ~30-60s para "acordar"
 - Se permanecer unavailable, verifique se `DATABASE_URL` usa a **Internal URL** correta
 
 ### Frontend chama URL errada em produção
-- Confirme que a variável `VITE_API_URL` está definida nas **Environment Variables** do Vercel (não apenas no arquivo `.env.production`)
-- Após alterar env vars no Vercel, faça um **Redeploy** manual (Deployments → Redeploy)
+- Confirme que `VITE_API_URL` está nas **Environment Variables** do Vercel
+- Após alterar env vars no Vercel: **Deployments → Redeploy** para rebuild com os novos valores
