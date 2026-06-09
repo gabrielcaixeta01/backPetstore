@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 _STORES = [
     dict(
-        name="Apex Petstore Centro",
+        name="Pet Club Centro",
         cnpj="11.111.111/0001-11",
         phone="(11) 3000-0001",
-        email="centro@apexbrasil.com",
+        email="centro@petclub.com.br",
         cep="01310-100",
         city="São Paulo",
         state="SP",
@@ -29,10 +29,10 @@ _STORES = [
         number="1000",
     ),
     dict(
-        name="Apex Petstore Norte",
+        name="Pet Club Norte",
         cnpj="22.222.222/0001-22",
         phone="(11) 3000-0002",
-        email="norte@apexbrasil.com",
+        email="norte@petclub.com.br",
         cep="02010-000",
         city="São Paulo",
         state="SP",
@@ -41,10 +41,10 @@ _STORES = [
         number="500",
     ),
     dict(
-        name="Apex Petstore Asa Sul",
+        name="Pet Club Asa Sul",
         cnpj="33.333.333/0001-33",
         phone="(61) 3000-0003",
-        email="asasul@apexbrasil.com",
+        email="asasul@petclub.com.br",
         cep="70390-045",
         city="Brasília",
         state="DF",
@@ -53,10 +53,10 @@ _STORES = [
         number="Bloco A",
     ),
     dict(
-        name="Apex Petstore Asa Norte",
+        name="Pet Club Asa Norte",
         cnpj="44.444.444/0001-44",
         phone="(61) 3000-0004",
-        email="asanorte@apexbrasil.com",
+        email="asanorte@petclub.com.br",
         cep="70712-903",
         city="Brasília",
         state="DF",
@@ -65,10 +65,10 @@ _STORES = [
         number="Bloco B",
     ),
     dict(
-        name="Apex Petstore Plano Piloto",
+        name="Pet Club Plano Piloto",
         cnpj="55.555.555/0001-55",
         phone="(61) 3000-0005",
-        email="planopiloto@apexbrasil.com",
+        email="planopiloto@petclub.com.br",
         cep="70070-912",
         city="Brasília",
         state="DF",
@@ -83,16 +83,16 @@ _STORES = [
 # ---------------------------------------------------------------------------
 
 _EMPLOYEES = [
-    dict(name="Carlos Mendes",   email="carlos.mendes@apexbrasil.com",   phone="(11) 91111-0001", employee_code="EMP-001", job_title="Veterinário",  salary=5500.00, hired_at=date(2023, 3,  1), store_index=0),
-    dict(name="Ana Lima",        email="ana.lima@apexbrasil.com",         phone="(11) 91111-0002", employee_code="EMP-002", job_title="Tosadora",     salary=3200.00, hired_at=date(2023, 6, 15), store_index=0),
-    dict(name="Pedro Souza",     email="pedro.souza@apexbrasil.com",      phone="(11) 91111-0003", employee_code="EMP-003", job_title="Atendente",    salary=2800.00, hired_at=date(2024, 1, 10), store_index=1),
-    dict(name="Julia Costa",     email="julia.costa@apexbrasil.com",      phone="(11) 91111-0004", employee_code="EMP-004", job_title="Veterinária",  salary=5800.00, hired_at=date(2024, 4,  1), store_index=1),
-    dict(name="Bruna Almeida",   email="bruna.almeida@apexbrasil.com",    phone="(61) 91111-0005", employee_code="EMP-005", job_title="Veterinária",  salary=5600.00, hired_at=date(2024, 2,  1), store_index=2),
-    dict(name="Rafael Lima",     email="rafael.lima@apexbrasil.com",      phone="(61) 91111-0006", employee_code="EMP-006", job_title="Tosador",      salary=3400.00, hired_at=date(2024, 3, 20), store_index=2),
-    dict(name="Marcos Andrade",  email="marcos.andrade@apexbrasil.com",   phone="(61) 91111-0007", employee_code="EMP-007", job_title="Veterinário",  salary=5700.00, hired_at=date(2024, 5,  5), store_index=3),
-    dict(name="Patrícia Gomes",  email="patricia.gomes@apexbrasil.com",   phone="(61) 91111-0008", employee_code="EMP-008", job_title="Atendente",    salary=2900.00, hired_at=date(2024, 6, 10), store_index=3),
-    dict(name="Fernanda Vieira", email="fernanda.vieira@apexbrasil.com",  phone="(61) 91111-0009", employee_code="EMP-009", job_title="Tosadora",     salary=3300.00, hired_at=date(2024, 7,  1), store_index=4),
-    dict(name="Diego Carvalho",  email="diego.carvalho@apexbrasil.com",   phone="(61) 91111-0010", employee_code="EMP-010", job_title="Atendente",    salary=2850.00, hired_at=date(2024, 8, 15), store_index=4),
+    dict(name="Carlos Mendes",   email="carlos.mendes@petclub.com.br",   phone="(11) 91111-0001", employee_code="EMP-001", job_title="Veterinário",  salary=5500.00, hired_at=date(2023, 3,  1), store_index=0),
+    dict(name="Ana Lima",        email="ana.lima@petclub.com.br",         phone="(11) 91111-0002", employee_code="EMP-002", job_title="Tosadora",     salary=3200.00, hired_at=date(2023, 6, 15), store_index=0),
+    dict(name="Pedro Souza",     email="pedro.souza@petclub.com.br",      phone="(11) 91111-0003", employee_code="EMP-003", job_title="Atendente",    salary=2800.00, hired_at=date(2024, 1, 10), store_index=1),
+    dict(name="Julia Costa",     email="julia.costa@petclub.com.br",      phone="(11) 91111-0004", employee_code="EMP-004", job_title="Veterinária",  salary=5800.00, hired_at=date(2024, 4,  1), store_index=1),
+    dict(name="Bruna Almeida",   email="bruna.almeida@petclub.com.br",    phone="(61) 91111-0005", employee_code="EMP-005", job_title="Veterinária",  salary=5600.00, hired_at=date(2024, 2,  1), store_index=2),
+    dict(name="Rafael Lima",     email="rafael.lima@petclub.com.br",      phone="(61) 91111-0006", employee_code="EMP-006", job_title="Tosador",      salary=3400.00, hired_at=date(2024, 3, 20), store_index=2),
+    dict(name="Marcos Andrade",  email="marcos.andrade@petclub.com.br",   phone="(61) 91111-0007", employee_code="EMP-007", job_title="Veterinário",  salary=5700.00, hired_at=date(2024, 5,  5), store_index=3),
+    dict(name="Patrícia Gomes",  email="patricia.gomes@petclub.com.br",   phone="(61) 91111-0008", employee_code="EMP-008", job_title="Atendente",    salary=2900.00, hired_at=date(2024, 6, 10), store_index=3),
+    dict(name="Fernanda Vieira", email="fernanda.vieira@petclub.com.br",  phone="(61) 91111-0009", employee_code="EMP-009", job_title="Tosadora",     salary=3300.00, hired_at=date(2024, 7,  1), store_index=4),
+    dict(name="Diego Carvalho",  email="diego.carvalho@petclub.com.br",   phone="(61) 91111-0010", employee_code="EMP-010", job_title="Atendente",    salary=2850.00, hired_at=date(2024, 8, 15), store_index=4),
 ]
 
 # ---------------------------------------------------------------------------
@@ -168,7 +168,7 @@ _APPOINTMENTS = [
         client_email="maria.silva@email.com",
         pet_name="Thor",
         store_index=0,
-        employee_email="carlos.mendes@apexbrasil.com",
+        employee_email="carlos.mendes@petclub.com.br",
         service_names=["Banho e Tosa"],
         service_at=datetime(2026, 5, 10, 9, 0),
         payment_method="pix",
@@ -180,7 +180,7 @@ _APPOINTMENTS = [
         client_email="joao.oliveira@email.com",
         pet_name="Mia",
         store_index=1,
-        employee_email="julia.costa@apexbrasil.com",
+        employee_email="julia.costa@petclub.com.br",
         service_names=["Consulta Veterinária"],
         service_at=datetime(2026, 5, 12, 14, 0),
         payment_method="cartao_credito",
@@ -192,7 +192,7 @@ _APPOINTMENTS = [
         client_email="ana.pereira@email.com",
         pet_name="Bob",
         store_index=2,
-        employee_email="bruna.almeida@apexbrasil.com",
+        employee_email="bruna.almeida@petclub.com.br",
         service_names=["Banho", "Hidratação"],
         service_at=datetime(2026, 5, 15, 10, 0),
         payment_method="dinheiro",
@@ -204,7 +204,7 @@ _APPOINTMENTS = [
         client_email="camila.fernandes@email.com",
         pet_name="Mel",
         store_index=4,
-        employee_email="fernanda.vieira@apexbrasil.com",
+        employee_email="fernanda.vieira@petclub.com.br",
         service_names=["Banho e Tosa"],
         service_at=datetime(2026, 5, 20, 11, 0),
         payment_method="pix",
@@ -216,7 +216,7 @@ _APPOINTMENTS = [
         client_email="maria.silva@email.com",
         pet_name="Thor",
         store_index=0,
-        employee_email="ana.lima@apexbrasil.com",
+        employee_email="ana.lima@petclub.com.br",
         service_names=["Adestramento"],
         service_at=datetime(2026, 6, 1, 9, 0),
         payment_method="pix",
@@ -228,7 +228,7 @@ _APPOINTMENTS = [
         client_email="lucas.santos@email.com",
         pet_name="Nemo",
         store_index=3,
-        employee_email="marcos.andrade@apexbrasil.com",
+        employee_email="marcos.andrade@petclub.com.br",
         service_names=["Consulta Veterinária"],
         service_at=datetime(2026, 6, 5, 15, 0),
         payment_method="cartao_debito",
@@ -240,7 +240,7 @@ _APPOINTMENTS = [
         client_email="joao.oliveira@email.com",
         pet_name="Mia",
         store_index=3,
-        employee_email="patrícia.gomes@apexbrasil.com",
+        employee_email="patrícia.gomes@petclub.com.br",
         service_names=["Banho", "Tosa"],
         service_at=datetime(2026, 6, 8, 13, 0),
         payment_method="pix",
@@ -268,7 +268,7 @@ def _seed_stores(db: Session) -> list[Store]:
 
 
 def _seed_superuser(db: Session, store: Store) -> None:
-    email = os.getenv("SUPERUSER_EMAIL", "admin@apexbrasil.com")
+    email = os.getenv("SUPERUSER_EMAIL", "admin@petclub.com.br")
     password = os.getenv("SUPERUSER_PASSWORD")
 
     if password is None:
@@ -324,7 +324,7 @@ def _seed_services(db: Session) -> None:
 
 
 def _seed_employees(db: Session, stores: list[Store]) -> None:
-    default_password = os.getenv("EMPLOYEE_DEFAULT_PASSWORD", "Apex@2024")
+    default_password = os.getenv("EMPLOYEE_DEFAULT_PASSWORD", "PetClub@2024")
     for data in _EMPLOYEES:
         if db.query(UserModel).filter(UserModel.email == data["email"]).first():
             continue
