@@ -11,76 +11,13 @@ from app.core.security import hash_password
 
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# Lojas
-# ---------------------------------------------------------------------------
-
 _STORES = [
-    dict(
-        name="Pet Club Centro",
-        cnpj="11.111.111/0001-11",
-        phone="(11) 3000-0001",
-        email="centro@petclub.com.br",
-        cep="01310-100",
-        city="São Paulo",
-        state="SP",
-        street="Av. Paulista",
-        neighborhood="Bela Vista",
-        number="1000",
-    ),
-    dict(
-        name="Pet Club Norte",
-        cnpj="22.222.222/0001-22",
-        phone="(11) 3000-0002",
-        email="norte@petclub.com.br",
-        cep="02010-000",
-        city="São Paulo",
-        state="SP",
-        street="Rua Voluntários da Pátria",
-        neighborhood="Santana",
-        number="500",
-    ),
-    dict(
-        name="Pet Club Asa Sul",
-        cnpj="33.333.333/0001-33",
-        phone="(61) 3000-0003",
-        email="asasul@petclub.com.br",
-        cep="70390-045",
-        city="Brasília",
-        state="DF",
-        street="SCS Quadra 01",
-        neighborhood="Asa Sul",
-        number="Bloco A",
-    ),
-    dict(
-        name="Pet Club Asa Norte",
-        cnpj="44.444.444/0001-44",
-        phone="(61) 3000-0004",
-        email="asanorte@petclub.com.br",
-        cep="70712-903",
-        city="Brasília",
-        state="DF",
-        street="SCN Quadra 02",
-        neighborhood="Asa Norte",
-        number="Bloco B",
-    ),
-    dict(
-        name="Pet Club Plano Piloto",
-        cnpj="55.555.555/0001-55",
-        phone="(61) 3000-0005",
-        email="planopiloto@petclub.com.br",
-        cep="70070-912",
-        city="Brasília",
-        state="DF",
-        street="Esplanada dos Ministérios",
-        neighborhood="Plano Piloto",
-        number="Bloco T",
-    ),
+    dict(name="Pet Club Centro", cnpj="11.111.111/0001-11", phone="(11) 3000-0001", email="centro@petclub.com.br", cep="01310-100", city="São Paulo", state="SP", street="Av. Paulista", neighborhood="Bela Vista", number="1000"),
+    dict(name="Pet Club Norte", cnpj="22.222.222/0001-22", phone="(11) 3000-0002", email="norte@petclub.com.br", cep="02010-000", city="São Paulo", state="SP", street="Rua Voluntários da Pátria", neighborhood="Santana", number="500"),
+    dict(name="Pet Club Asa Sul", cnpj="33.333.333/0001-33", phone="(61) 3000-0003", email="asasul@petclub.com.br", cep="70390-045", city="Brasília", state="DF", street="SCS Quadra 01", neighborhood="Asa Sul", number="Bloco A"),
+    dict(name="Pet Club Asa Norte", cnpj="44.444.444/0001-44", phone="(61) 3000-0004", email="asanorte@petclub.com.br", cep="70712-903", city="Brasília", state="DF", street="SCN Quadra 02", neighborhood="Asa Norte", number="Bloco B"),
+    dict(name="Pet Club Plano Piloto", cnpj="55.555.555/0001-55", phone="(61) 3000-0005", email="planopiloto@petclub.com.br", cep="70070-912", city="Brasília", state="DF", street="Esplanada dos Ministérios", neighborhood="Plano Piloto", number="Bloco T"),
 ]
-
-# ---------------------------------------------------------------------------
-# Funcionários  (store_index → posição em _STORES)
-# ---------------------------------------------------------------------------
 
 _EMPLOYEES = [
     dict(name="Carlos Mendes",   email="carlos.mendes@petclub.com.br",   phone="(11) 91111-0001", employee_code="EMP-001", job_title="Veterinário",  salary=5500.00, hired_at=date(2023, 3,  1), store_index=0),
@@ -95,10 +32,6 @@ _EMPLOYEES = [
     dict(name="Diego Carvalho",  email="diego.carvalho@petclub.com.br",   phone="(61) 91111-0010", employee_code="EMP-010", job_title="Atendente",    salary=2850.00, hired_at=date(2024, 8, 15), store_index=4),
 ]
 
-# ---------------------------------------------------------------------------
-# Categorias e Tags
-# ---------------------------------------------------------------------------
-
 _CATEGORIES = [
     ("Cachorro", "Cães de todas as raças e portes"),
     ("Gato",     "Felinos domésticos"),
@@ -109,18 +42,14 @@ _CATEGORIES = [
 ]
 
 _TAGS = [
-    ("Vacinado",         "Animal com vacinas em dia"),
-    ("Castrado",         "Animal castrado"),
-    ("Microchipado",     "Animal com microchip de identificação"),
-    ("Alergia alimentar","Animal com restrições alimentares"),
+    ("Vacinado",          "Animal com vacinas em dia"),
+    ("Castrado",          "Animal castrado"),
+    ("Microchipado",      "Animal com microchip de identificação"),
+    ("Alergia alimentar", "Animal com restrições alimentares"),
     ("Cuidados especiais","Necessita atenção veterinária especial"),
-    ("Filhote",          "Animal com menos de 1 ano"),
-    ("Idoso",            "Animal com mais de 7 anos"),
+    ("Filhote",           "Animal com menos de 1 ano"),
+    ("Idoso",             "Animal com mais de 7 anos"),
 ]
-
-# ---------------------------------------------------------------------------
-# Serviços
-# ---------------------------------------------------------------------------
 
 _SERVICES = [
     dict(name="Banho",                description="Banho completo com shampoo neutro, condicionador e secagem",           price=50.00),
@@ -133,10 +62,6 @@ _SERVICES = [
     dict(name="Hidratação",           description="Tratamento de hidratação profunda para pelo e pele ressecados",        price=60.00),
 ]
 
-# ---------------------------------------------------------------------------
-# Clientes
-# ---------------------------------------------------------------------------
-
 _CLIENTS = [
     dict(name="Maria Silva",      email="maria.silva@email.com",      phone="(61) 99001-0001", cpf="111.111.111-11", client_type="pessoa_fisica", cep="70390-025", city="Brasília", state="DF"),
     dict(name="João Oliveira",    email="joao.oliveira@email.com",    phone="(61) 99001-0002", cpf="222.222.222-22", client_type="pessoa_fisica", cep="70712-500", city="Brasília", state="DF"),
@@ -145,109 +70,22 @@ _CLIENTS = [
     dict(name="Camila Fernandes", email="camila.fernandes@email.com", phone="(61) 99001-0005", cpf="555.555.555-55", client_type="pessoa_fisica", cep="70673-400", city="Brasília", state="DF"),
 ]
 
-# ---------------------------------------------------------------------------
-# Pets  (client_index → posição em _CLIENTS)
-# ---------------------------------------------------------------------------
-
 _PETS = [
-    dict(name="Thor", breed="Labrador Retriever", sex="macho",  size="grande",  weight=30.0, health_notes="Vacinado em dia, ativo e saudável",       category_name="Cachorro", tags=["Vacinado", "Microchipado"], client_index=0),
-    dict(name="Mia",  breed="Siamês",             sex="femea",  size="pequeno", weight=4.0,  health_notes="Castrada, sem alergias conhecidas",        category_name="Gato",     tags=["Castrado", "Vacinado"],     client_index=1),
-    dict(name="Bob",  breed="Golden Retriever",   sex="macho",  size="grande",  weight=28.0, health_notes="Alergia a frango, vacinado em dia",        category_name="Cachorro", tags=["Vacinado", "Alergia alimentar"], client_index=2),
-    dict(name="Nemo", breed="Peixe-palhaço",      sex="macho",  size="pequeno", weight=0.1,  health_notes="Aquário de 100L com salinidade controlada", category_name="Peixe",    tags=[],                           client_index=3),
-    dict(name="Mel",  breed="Yorkshire Terrier",  sex="femea",  size="pequeno", weight=3.0,  health_notes="Filhote, vacinação em andamento",          category_name="Cachorro", tags=["Filhote", "Vacinado"],       client_index=4),
+    dict(name="Thor", breed="Labrador Retriever", sex="macho",  size="grande",  weight=30.0, health_notes="Vacinado em dia, ativo e saudável",        category_name="Cachorro", tags=["Vacinado", "Microchipado"],       client_index=0),
+    dict(name="Mia",  breed="Siamês",             sex="femea",  size="pequeno", weight=4.0,  health_notes="Castrada, sem alergias conhecidas",         category_name="Gato",     tags=["Castrado", "Vacinado"],           client_index=1),
+    dict(name="Bob",  breed="Golden Retriever",   sex="macho",  size="grande",  weight=28.0, health_notes="Alergia a frango, vacinado em dia",         category_name="Cachorro", tags=["Vacinado", "Alergia alimentar"],  client_index=2),
+    dict(name="Nemo", breed="Peixe-palhaço",      sex="macho",  size="pequeno", weight=0.1,  health_notes="Aquário de 100L com salinidade controlada", category_name="Peixe",    tags=[],                                 client_index=3),
+    dict(name="Mel",  breed="Yorkshire Terrier",  sex="femea",  size="pequeno", weight=3.0,  health_notes="Filhote, vacinação em andamento",           category_name="Cachorro", tags=["Filhote", "Vacinado"],             client_index=4),
 ]
 
-# ---------------------------------------------------------------------------
-# Atendimentos
-# ---------------------------------------------------------------------------
-# client_email / pet_name / employee_email identificam os registros.
-# service_names lista os serviços prestados (devem existir em _SERVICES).
-
 _APPOINTMENTS = [
-    dict(
-        client_email="maria.silva@email.com",
-        pet_name="Thor",
-        store_index=0,
-        employee_email="carlos.mendes@petclub.com.br",
-        service_names=["Banho e Tosa"],
-        service_at=datetime(2026, 5, 10, 9, 0),
-        payment_method="pix",
-        status="concluido",
-        online=False,
-        notes="Tosa estética padrão Labrador.",
-    ),
-    dict(
-        client_email="joao.oliveira@email.com",
-        pet_name="Mia",
-        store_index=1,
-        employee_email="julia.costa@petclub.com.br",
-        service_names=["Consulta Veterinária"],
-        service_at=datetime(2026, 5, 12, 14, 0),
-        payment_method="cartao_credito",
-        status="concluido",
-        online=False,
-        notes="Consulta de rotina anual.",
-    ),
-    dict(
-        client_email="ana.pereira@email.com",
-        pet_name="Bob",
-        store_index=2,
-        employee_email="bruna.almeida@petclub.com.br",
-        service_names=["Banho", "Hidratação"],
-        service_at=datetime(2026, 5, 15, 10, 0),
-        payment_method="dinheiro",
-        status="concluido",
-        online=False,
-        notes="Atenção: alergia a frango, usar shampoo hipoalergênico.",
-    ),
-    dict(
-        client_email="camila.fernandes@email.com",
-        pet_name="Mel",
-        store_index=4,
-        employee_email="fernanda.vieira@petclub.com.br",
-        service_names=["Banho e Tosa"],
-        service_at=datetime(2026, 5, 20, 11, 0),
-        payment_method="pix",
-        status="concluido",
-        online=False,
-        notes=None,
-    ),
-    dict(
-        client_email="maria.silva@email.com",
-        pet_name="Thor",
-        store_index=0,
-        employee_email="ana.lima@petclub.com.br",
-        service_names=["Adestramento"],
-        service_at=datetime(2026, 6, 1, 9, 0),
-        payment_method="pix",
-        status="agendado",
-        online=False,
-        notes="Primeira sessão de adestramento.",
-    ),
-    dict(
-        client_email="lucas.santos@email.com",
-        pet_name="Nemo",
-        store_index=3,
-        employee_email="marcos.andrade@petclub.com.br",
-        service_names=["Consulta Veterinária"],
-        service_at=datetime(2026, 6, 5, 15, 0),
-        payment_method="cartao_debito",
-        status="agendado",
-        online=False,
-        notes="Primeira consulta do Nemo.",
-    ),
-    dict(
-        client_email="joao.oliveira@email.com",
-        pet_name="Mia",
-        store_index=3,
-        employee_email="patrícia.gomes@petclub.com.br",
-        service_names=["Banho", "Tosa"],
-        service_at=datetime(2026, 6, 8, 13, 0),
-        payment_method="pix",
-        status="agendado",
-        online=True,
-        notes="Agendamento online.",
-    ),
+    dict(client_email="maria.silva@email.com",      pet_name="Thor", store_index=0, employee_email="carlos.mendes@petclub.com.br",   service_names=["Banho e Tosa"],              service_at=datetime(2026, 5, 10, 9,  0), payment_method="pix",            status="concluido", online=False, notes="Tosa estética padrão Labrador."),
+    dict(client_email="joao.oliveira@email.com",    pet_name="Mia",  store_index=1, employee_email="julia.costa@petclub.com.br",     service_names=["Consulta Veterinária"],      service_at=datetime(2026, 5, 12, 14, 0), payment_method="cartao_credito", status="concluido", online=False, notes="Consulta de rotina anual."),
+    dict(client_email="ana.pereira@email.com",      pet_name="Bob",  store_index=2, employee_email="bruna.almeida@petclub.com.br",   service_names=["Banho", "Hidratação"],       service_at=datetime(2026, 5, 15, 10, 0), payment_method="dinheiro",       status="concluido", online=False, notes="Atenção: alergia a frango, usar shampoo hipoalergênico."),
+    dict(client_email="camila.fernandes@email.com", pet_name="Mel",  store_index=4, employee_email="fernanda.vieira@petclub.com.br", service_names=["Banho e Tosa"],              service_at=datetime(2026, 5, 20, 11, 0), payment_method="pix",            status="concluido", online=False, notes=None),
+    dict(client_email="maria.silva@email.com",      pet_name="Thor", store_index=0, employee_email="ana.lima@petclub.com.br",        service_names=["Adestramento"],              service_at=datetime(2026, 6,  1, 9,  0), payment_method="pix",            status="agendado",  online=False, notes="Primeira sessão de adestramento."),
+    dict(client_email="lucas.santos@email.com",     pet_name="Nemo", store_index=3, employee_email="marcos.andrade@petclub.com.br", service_names=["Consulta Veterinária"],      service_at=datetime(2026, 6,  5, 15, 0), payment_method="cartao_debito",  status="agendado",  online=False, notes="Primeira consulta do Nemo."),
+    dict(client_email="joao.oliveira@email.com",    pet_name="Mia",  store_index=3, employee_email="patricia.gomes@petclub.com.br", service_names=["Banho", "Tosa"],             service_at=datetime(2026, 6,  8, 13, 0), payment_method="pix",            status="agendado",  online=True,  notes="Agendamento online."),
 ]
 
 # ---------------------------------------------------------------------------
@@ -268,13 +106,11 @@ def _seed_stores(db: Session) -> list[Store]:
 
 
 def _seed_superuser(db: Session, store: Store) -> None:
-    email = os.getenv("SUPERUSER_EMAIL", "admin@petclub.com.br")
+    email = os.getenv("SUPERUSER_EMAIL", "admin@petstore.com")
     password = os.getenv("SUPERUSER_PASSWORD")
 
     if password is None:
-        logger.warning(
-            "seed: SUPERUSER_PASSWORD não definida — superuser não será criado."
-        )
+        logger.warning("seed: SUPERUSER_PASSWORD não definida — superuser não será criado.")
         return
 
     if db.query(UserModel).filter(UserModel.email == email).first():
@@ -324,7 +160,7 @@ def _seed_services(db: Session) -> None:
 
 
 def _seed_employees(db: Session, stores: list[Store]) -> None:
-    default_password = os.getenv("EMPLOYEE_DEFAULT_PASSWORD", "PetClub@2024")
+    default_password = os.getenv("EMPLOYEE_DEFAULT_PASSWORD", "Petstore@2026")
     for data in _EMPLOYEES:
         if db.query(UserModel).filter(UserModel.email == data["email"]).first():
             continue
@@ -352,7 +188,7 @@ def _seed_employees(db: Session, stores: list[Store]) -> None:
 
 
 def _seed_clients(db: Session) -> list[ClientModel]:
-    default_password = os.getenv("CLIENT_DEFAULT_PASSWORD", "Cliente@2024")
+    default_password = os.getenv("CLIENT_DEFAULT_PASSWORD", "Petstore@2026")
     clients: list[ClientModel] = []
     for data in _CLIENTS:
         user = db.query(UserModel).filter(UserModel.email == data["email"]).first()
@@ -427,7 +263,6 @@ def _seed_pets(db: Session, clients: list[ClientModel]) -> list[Pet]:
 
 def _seed_appointments(db: Session, stores: list[Store], pets: list[Pet], clients: list[ClientModel]) -> None:
     for data in _APPOINTMENTS:
-        # Busca client pelo e-mail
         client_user = db.query(UserModel).filter(UserModel.email == data["client_email"]).first()
         if client_user is None:
             logger.warning("seed: cliente '%s' não encontrado, pulando atendimento", data["client_email"])
@@ -436,13 +271,11 @@ def _seed_appointments(db: Session, stores: list[Store], pets: list[Pet], client
         if client is None:
             continue
 
-        # Busca pet pelo nome + dono
         pet = db.query(Pet).filter(Pet.name == data["pet_name"], Pet.owner_id == client.user_id).first()
         if pet is None:
             logger.warning("seed: pet '%s' não encontrado para '%s', pulando atendimento", data["pet_name"], data["client_email"])
             continue
 
-        # Idempotência: skip se já existe um atendimento igual
         exists = (
             db.query(Appointment)
             .filter(
@@ -455,7 +288,6 @@ def _seed_appointments(db: Session, stores: list[Store], pets: list[Pet], client
         if exists:
             continue
 
-        # Busca funcionário
         employee_user = db.query(UserModel).filter(UserModel.email == data["employee_email"]).first()
         employee = (
             db.query(EmployeeModel).filter(EmployeeModel.user_id == employee_user.id).first()
@@ -464,7 +296,6 @@ def _seed_appointments(db: Session, stores: list[Store], pets: list[Pet], client
 
         store = stores[data["store_index"]]
 
-        # Calcula o valor total somando os preços dos serviços
         services: list[Service] = []
         total = 0.0
         for svc_name in data["service_names"]:
@@ -508,14 +339,14 @@ def _seed_appointments(db: Session, stores: list[Store], pets: list[Pet], client
 def run_seed() -> None:
     db = SessionLocal()
     try:
-        stores   = _seed_stores(db)
+        stores  = _seed_stores(db)
         _seed_superuser(db, stores[0])
         _seed_categories(db)
         _seed_tags(db)
         _seed_services(db)
         _seed_employees(db, stores)
-        clients  = _seed_clients(db)
-        pets     = _seed_pets(db, clients)
+        clients = _seed_clients(db)
+        pets    = _seed_pets(db, clients)
         _seed_appointments(db, stores, pets, clients)
         db.commit()
         logger.info("seed: concluído com sucesso.")

@@ -11,6 +11,14 @@ from app.seed import run_seed
 
 logger = logging.getLogger(__name__)
 
+_default_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+_env_origins = os.getenv("CORS_ORIGINS", "")
+_extra = [o.strip() for o in _env_origins.split(",") if o.strip()]
+origins = list(dict.fromkeys(_default_origins + _extra))
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     initialize_database()
@@ -18,16 +26,7 @@ async def lifespan(app: FastAPI):
     logger.warning("CORS allowed origins: %s", origins)
     yield
 
-app = FastAPI(title="Petstore da Apex", lifespan=lifespan)
-
-_default_origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://front-apex-delta.vercel.app",
-]
-_env_origins = os.getenv("CORS_ORIGINS", "")
-_extra = [o.strip() for o in _env_origins.split(",") if o.strip()]
-origins = list(dict.fromkeys(_default_origins + _extra))
+app = FastAPI(title="Petstore da ApexBrasil", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
