@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from fastapi import HTTPException
 from sqlalchemy import func
@@ -120,8 +120,18 @@ def _sync_appointment_total(db: Session, appointment: Appointment) -> Appointmen
 	return appointment
 
 
+def _utcnow() -> datetime:
+	return datetime.now(timezone.utc)
+
+
+def _to_utc_aware(dt: datetime) -> datetime:
+	if dt.tzinfo is None:
+		return dt.replace(tzinfo=timezone.utc)
+	return dt.astimezone(timezone.utc)
+
+
 def _check_and_mark_delayed(db: Session, appointment: Appointment) -> Appointment:
-	if appointment.status == "agendado" and appointment.service_at < datetime.utcnow():
+	if appointment.status == "agendado" and _to_utc_aware(appointment.service_at) < _utcnow():
 		appointment.status = "atrasado"
 		db.commit()
 	return appointment
@@ -179,9 +189,9 @@ def create_appointment(
 	normalized_payment_method = _normalize_payment_method(payment_method)
 	normalized_status = _normalize_status(status)
 
-	effective_service_at = service_at or datetime.utcnow()
+	now = _utcnow()
+	effective_service_at = _to_utc_aware(service_at) if service_at else now
 	effective_status = normalized_status or status
-	now = datetime.utcnow()
 	if effective_service_at < now and effective_status == "agendado":
 		raise HTTPException(
 			status_code=400,
@@ -222,7 +232,7 @@ def create_appointment(
 
 	appointment = Appointment(
 		final_value=Decimal("0"),
-		service_at=service_at or datetime.utcnow(),
+		service_at=effective_service_at,
 		status=normalized_status or status,
 		store_id=store_id,
 		client_id=client_id,
@@ -285,9 +295,10 @@ def update_appointment(
 	normalized_payment_method = _normalize_payment_method(payment_method)
 	normalized_status = _normalize_status(status)
 
-	effective_service_at = service_at if service_at is not None else appointment.service_at
+	now = _utcnow()
+	raw_service_at = service_at if service_at is not None else appointment.service_at
+	effective_service_at = _to_utc_aware(raw_service_at)
 	effective_status = normalized_status if status is not None else appointment.status
-	now = datetime.utcnow()
 	if effective_service_at < now and effective_status == "agendado":
 		raise HTTPException(
 			status_code=400,
