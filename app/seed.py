@@ -108,6 +108,11 @@ def _seed_stores(db: Session) -> list[Store]:
 def _seed_superuser(db: Session, store: Store) -> None:
     email = os.getenv("SUPERUSER_EMAIL", "admin@petstore.com")
     password = os.getenv("SUPERUSER_PASSWORD")
+    employee_code = "SUP-001"
+
+    existing_employee = db.query(EmployeeModel).filter(EmployeeModel.employee_code == employee_code).first()
+    if existing_employee is not None:
+        return
 
     if password is None:
         logger.warning("seed: SUPERUSER_PASSWORD não definida — superuser não será criado.")
@@ -129,7 +134,7 @@ def _seed_superuser(db: Session, store: Store) -> None:
     db.flush()
     db.add(EmployeeModel(
         user_id=user.id,
-        employee_code="SUP-001",
+        employee_code=employee_code,
         job_title="Administrador do Sistema",
         salary=0,
         hired_at=date.today(),
@@ -162,6 +167,8 @@ def _seed_services(db: Session) -> None:
 def _seed_employees(db: Session, stores: list[Store]) -> None:
     default_password = os.getenv("EMPLOYEE_DEFAULT_PASSWORD", "Petstore@2026")
     for data in _EMPLOYEES:
+        if db.query(EmployeeModel).filter(EmployeeModel.employee_code == data["employee_code"]).first():
+            continue
         if db.query(UserModel).filter(UserModel.email == data["email"]).first():
             continue
         store = stores[data["store_index"]]
