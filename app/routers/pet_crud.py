@@ -42,7 +42,8 @@ def create_pet(
     return created_pet
 
 
-@router.get("/pets", response_model=list[Pet])
+@router.get("", response_model=list[Pet])
+@router.get("/pets", response_model=list[Pet], include_in_schema=False)
 def list_pets(db: Session = Depends(get_db)):
     return pet_service.list_pets(db)
 

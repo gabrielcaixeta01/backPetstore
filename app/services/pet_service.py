@@ -277,5 +277,5 @@ def delete_pet(db: Session, pet_id: int):
 
 
 def list_pets( db: Session) -> list[Pet]:
-    return db.query(Pet).options(selectinload(Pet.tags)).order_by(Pet.id).all()
+    return db.query(Pet).options(selectinload(Pet.tags)).order_by(Pet.id.desc()).all()
 
